@@ -5,12 +5,13 @@
 + creates
 + evenbetter toml
 
-
 # settings
 
 + breakpoint everywhere
-+ rest analyzer -》 check command change to clippy
++ rust analyzer -> check command change to clippy
 
 # create project
 
 > cargo new hello_world
+> 
+> cargo new --lib authentication

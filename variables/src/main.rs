@@ -1,11 +1,11 @@
-fn double(n:i32) -> i32 {
+fn double(n: i32) -> i32 {
     n * 2
 }
 
 // fn greate (s: String) {
 //     println!("hello {}", s);
 // }
-fn greet(s: String) -> String{
+fn greet(s: String) -> String {
     println!("hello {}", s);
     s
 }
@@ -18,10 +18,10 @@ fn greet_borrow_mut(s: &mut String) {
     *s = format!("mut after fn {s}");
     println!("{s}");
 }
-fn double_or_nothing(n:i32) -> i32 {
+fn double_or_nothing(n: i32) -> i32 {
     if n > 0 {
-        return n * 2
-    } 
+        return n * 2;
+    }
     0
 }
 
@@ -29,9 +29,7 @@ fn main() {
     let mut n = 5;
     n += 6;
     println!("{n}");
-    let n = {
-        6
-    };
+    let n = { 6 };
 
     println!("{n}");
     let n = {
@@ -44,11 +42,7 @@ fn main() {
     println!("{}", n2);
 
     let i = 5;
-    let m = if i  == 5 {
-        6
-    } else {
-        7
-    };
+    let m = if i == 5 { 6 } else { 7 };
     println!("{}", m);
 
     let name = "hello".to_string();
@@ -64,4 +58,14 @@ fn main() {
     println!("{name_mut}");
     greet(name_mut.clone());
 
+    let input = read_line();
+    println!("You typed: [{input}]");
+}
+
+fn read_line() -> String {
+    let mut input = String::new();
+    std::io::stdin()
+        .read_line(&mut input)
+        .expect("Stdin not working");
+    input.trim().to_string()
 }
