@@ -1,9 +1,12 @@
+use std::collections::HashMap;
+
 pub fn greet_user(name: &str) -> String {
     format!("Hello, {name}!")
 }
 pub fn login(username: &str, password: &str) -> Option<LoginAction> {
+    // let username = username.to_string();
     let users = User::get_users();
-    if let Some(user) = users.iter().find(|user| user.username == username) {
+    if let Some(user) = users.get(username) {
         if user.password == password {
             return Some(LoginAction::Granted(user.role.clone()));
         } else {
@@ -38,15 +41,35 @@ impl User {
         User {
             username: username.to_lowercase(),
             password: password.to_string(),
-            role: role,
+            role,
         }
     }
 
-    pub fn get_users() -> [User; 2] {
-        [
-            Self::new("Bob", "password", LoginRole::User),
-            Self::new("Joy", "password", LoginRole::User),
-        ]
+    // fn get_admin_users() {
+    //     let users = Self::get_users()
+    //         .into_iter()
+    //         .filter(|user| user.role == LoginRole::Admin)
+    //         // .map(|u| u.username)
+    //         .collect::<Vec<User>>();
+    // }
+
+    // pub fn get_users() -> Vec<User> {
+    // vec![
+    //     Self::new("Bob", "password", LoginRole::User),
+    //     Self::new("Joy", "password", LoginRole::User),
+    // ]
+    // }
+    pub fn get_users() -> HashMap<String, User> {
+        let mut users = HashMap::new();
+        users.insert(
+            "admin".to_string(),
+            User::new("admin", "password", LoginRole::Admin),
+        );
+        users.insert(
+            "bob".to_string(),
+            User::new("bob", "password", LoginRole::User),
+        );
+        users
     }
 }
 pub fn read_line() -> String {
