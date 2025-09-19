@@ -93,6 +93,12 @@ impl User {
             users
         }
     }
+
+    pub fn save_users(users: HashMap<String, User>) {
+        let users_path = std::path::Path::new("users.json");
+        let users_json = serde_json::to_string(&users).unwrap();
+        std::fs::write(users_path, users_json).unwrap();
+    }
 }
 pub fn read_line() -> String {
     let mut input = String::new();

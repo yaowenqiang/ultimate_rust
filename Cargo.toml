@@ -12,5 +12,6 @@ members = [ "authentication",
     "hello_world",
     "variables",
     "authentication",
-    "login"
+    "login" ,
+    "login_manager"
 ]
