@@ -14,4 +14,4 @@ members = [ "authentication",
     "authentication",
     "login" ,
     "login_manager"
-, "threads_demo", "divide_work", "my_thread", "scoped_thread"]
+, "threads_demo", "divide_work", "my_thread", "scoped_thread", "footgun", "footgun_fixed", "footgun_manual"]
