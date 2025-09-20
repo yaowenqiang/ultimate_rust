@@ -14,4 +14,4 @@ members = [ "authentication",
     "authentication",
     "login" ,
     "login_manager"
-]
+, "threads_demo"]

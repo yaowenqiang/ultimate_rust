@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/login/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/login_manager/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/threads_demo/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/variables/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
