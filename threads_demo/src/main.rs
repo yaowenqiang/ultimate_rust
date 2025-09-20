@@ -1,9 +1,14 @@
 use std::thread;
-fn hello_thread() {
-    println!("Hello from thread!");
+fn hello_thread(n: u32) {
+    println!("Hello from thread! {n}");
 }
 fn main() {
     println!("Hello from main thread!");
-    let thread_handle = thread::spawn(|| hello_thread());
-    thread_handle.join().unwrap();
+    let mut thread_handles = Vec::new();
+    for i in 0..10 {
+        let thread_handle = thread::spawn(move || hello_thread(i));
+        thread_handles.push(thread_handle);
+    }
+
+    thread_handles.into_iter().for_each(|h| h.join().unwrap());
 }
