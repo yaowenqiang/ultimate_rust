@@ -12,6 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/login_manager/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/mutex_demo/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/my_thread/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/read_write_lock_demo/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scoped_thread/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/threads_demo/src" isTestSource="false" />
