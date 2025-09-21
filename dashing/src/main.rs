@@ -32,11 +32,11 @@ fn main() {
             }
         });
     }
-    
+
     // 主线程休眠 5 秒，让工作线程有时间执行操作
     // Duration 文档: https://doc.rust-lang.org/std/time/struct.Duration.html
     std::thread::sleep(std::time::Duration::from_secs(5));
-    
+
     // 打印最终的哈希表内容
     // {:#?} 是美化打印格式，显示结构化的调试信息
     println!("{SHARED:#?}");

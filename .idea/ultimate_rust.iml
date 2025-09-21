@@ -11,6 +11,7 @@
       <sourceFolder url="file://$MODULE_DIR$/footgun/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/footgun_fixed/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/footgun_manual/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/hello_async/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/hello_world/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/login/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/login_manager/src" isTestSource="false" />

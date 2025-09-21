@@ -1,14 +1,14 @@
 //! # Footgun Fixed：数据竞争修复示例
-//! 
+//!
 //! 这是原 "footgun" 示例的修复版本，展示了如何正确处理并发编程中的数据竞争问题。
 //! 提供了两种解决方案：原子类型 (AtomicI32) 和互斥锁 (Mutex)。
-//! 
+//!
 //! **这展示了正确的并发编程实践！**
 
 use std::{
     sync::{
-        atomic::{AtomicI32, Ordering},
         Arc, Mutex,
+        atomic::{AtomicI32, Ordering},
     },
     thread,
     time::Instant,
@@ -28,15 +28,18 @@ fn main() {
     // 运行两种解决方案进行对比
     println!("=== 解决方案 1: 原子类型 (AtomicI32) ===");
     let atomic_result = run_atomic_version();
-    
+
     println!("\n=== 解决方案 2: 互斥锁 (Mutex) ===");
     let mutex_result = run_mutex_version();
-    
+
     println!("\n=== 性能对比 ===");
     println!("原子操作用时: {:.2}ms", atomic_result.duration_ms);
     println!("互斥锁用时:   {:.2}ms", mutex_result.duration_ms);
-    println!("性能差异:     {:.1}x", mutex_result.duration_ms / atomic_result.duration_ms);
-    
+    println!(
+        "性能差异:     {:.1}x",
+        mutex_result.duration_ms / atomic_result.duration_ms
+    );
+
     println!("\n✅ 两种方案都得到了正确的结果: 1,000,000");
     println!("💡 原子操作通常比互斥锁有更好的性能，但互斥锁更适合复杂的临界区。");
 }
@@ -50,12 +53,12 @@ struct BenchResult {
 /// 使用原子类型的解决方案
 fn run_atomic_version() -> BenchResult {
     let start_time = Instant::now();
-    
+
     // 重置计数器
     ATOMIC_COUNTER.store(0, Ordering::SeqCst);
-    
+
     let mut handles = Vec::new();
-    
+
     // 创建 1000 个线程，每个线程执行 1000 次原子递增
     for i in 0..1000 {
         let handle = thread::spawn(move || {
@@ -66,23 +69,27 @@ fn run_atomic_version() -> BenchResult {
             }
         });
         handles.push(handle);
-        
+
         // 显示进度
         if (i + 1) % 200 == 0 {
             println!("原子版本: 已创建 {} 个线程...", i + 1);
         }
     }
-    
+
     println!("原子版本: 所有线程已启动，等待完成...");
-    
+
     // 等待所有线程完成
     handles.into_iter().for_each(|h| h.join().unwrap());
-    
+
     let final_count = ATOMIC_COUNTER.load(Ordering::SeqCst);
     let duration = start_time.elapsed();
-    
-    println!("原子版本结果: {} (耗时 {:.2}ms)", final_count, duration.as_secs_f64() * 1000.0);
-    
+
+    println!(
+        "原子版本结果: {} (耗时 {:.2}ms)",
+        final_count,
+        duration.as_secs_f64() * 1000.0
+    );
+
     BenchResult {
         final_count,
         duration_ms: duration.as_secs_f64() * 1000.0,
@@ -92,13 +99,13 @@ fn run_atomic_version() -> BenchResult {
 /// 使用互斥锁的解决方案
 fn run_mutex_version() -> BenchResult {
     let start_time = Instant::now();
-    
+
     // 创建被 Arc<Mutex<>> 包装的共享计数器
     // Arc (Atomically Reference Counted) 允许多个线程拥有同一数据
     // Mutex 确保同一时间只有一个线程可以访问数据
     let counter: MutexCounter = Arc::new(Mutex::new(0));
     let mut handles = Vec::new();
-    
+
     // 创建 1000 个线程，每个线程执行 1000 次加锁递增
     for i in 0..1000 {
         let counter_clone = Arc::clone(&counter);
@@ -112,23 +119,27 @@ fn run_mutex_version() -> BenchResult {
             }
         });
         handles.push(handle);
-        
+
         // 显示进度
         if (i + 1) % 200 == 0 {
             println!("互斥锁版本: 已创建 {} 个线程...", i + 1);
         }
     }
-    
+
     println!("互斥锁版本: 所有线程已启动，等待完成...");
-    
+
     // 等待所有线程完成
     handles.into_iter().for_each(|h| h.join().unwrap());
-    
+
     let final_count = *counter.lock().unwrap();
     let duration = start_time.elapsed();
-    
-    println!("互斥锁版本结果: {} (耗时 {:.2}ms)", final_count, duration.as_secs_f64() * 1000.0);
-    
+
+    println!(
+        "互斥锁版本结果: {} (耗时 {:.2}ms)",
+        final_count,
+        duration.as_secs_f64() * 1000.0
+    );
+
     BenchResult {
         final_count,
         duration_ms: duration.as_secs_f64() * 1000.0,

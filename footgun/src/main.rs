@@ -1,8 +1,8 @@
 //! # Footgun 示例：数据竞争演示
-//! 
+//!
 //! 这是一个 "footgun" (容易出错的代码) 示例，用于演示 Rust 中不安全的并发编程。
 //! 这段代码故意展示了数据竞争的危险性和不确定行为。
-//! 
+//!
 //! **警告：这是反面教材，展示了什么是不应该做的！**
 
 use std::{ptr::addr_of, thread};
@@ -18,7 +18,7 @@ fn main() {
 
     // 存储所有线程句柄的容器
     let mut handles = Vec::new();
-    
+
     // 创建 1000 个线程，每个线程都会尝试修改同一个全局变量
     for i in 0..1000 {
         let handle = thread::spawn(move || {
@@ -35,7 +35,7 @@ fn main() {
             }
         });
         handles.push(handle);
-        
+
         // 每创建 100 个线程就显示一次进度
         if (i + 1) % 100 == 0 {
             println!("已创建 {} 个线程...", i + 1);
@@ -43,7 +43,7 @@ fn main() {
     }
 
     println!("所有线程已启动，等待完成...");
-    
+
     // 等待所有线程完成
     // join() 确保主线程等待所有子线程执行完毕
     handles.into_iter().for_each(|h| h.join().unwrap());
@@ -57,8 +57,11 @@ fn main() {
         println!("最终计数值: {}", final_count);
         println!("期望值: 1,000,000");
         println!("丢失的递增: {}", 1_000_000 - final_count);
-        println!("丢失率: {:.2}%", (1_000_000 - final_count) as f64 / 10_000.0);
-        
+        println!(
+            "丢失率: {:.2}%",
+            (1_000_000 - final_count) as f64 / 10_000.0
+        );
+
         if final_count < 1_000_000 {
             println!("\n⚠️  数据竞争导致了递增操作的丢失！");
             println!("这就是为什么需要使用 Mutex、Atomic 等同步原语的原因。");
