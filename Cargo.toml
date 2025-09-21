@@ -9,10 +9,10 @@ edition = "2021"
 cpu_affinity = { version = "0.1.0", path = "cpu_affinity" }
 
 [workspace]
-members = [ "authentication",
+members = ["authentication",
     "hello_world",
     "variables",
     "authentication",
-    "login" ,
+    "login",
     "login_manager"
-, "threads_demo", "divide_work", "my_thread", "scoped_thread", "footgun", "footgun_fixed", "footgun_manual", "mutex_demo", "read_write_lock_demo", "deadlocks", "dashing", "parking", "channels1", "threadpool_workers", "work_queue", "cpu_affinity"]
+    , "threads_demo", "divide_work", "my_thread", "scoped_thread", "footgun", "footgun_fixed", "footgun_manual", "mutex_demo", "read_write_lock_demo", "deadlocks", "dashing", "parking", "channels1", "threadpool_workers", "work_queue", "cpu_affinity", "thread_proi"]
