@@ -422,6 +422,7 @@ dependencies = [
 name = "hello_tokio"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "tokio",
 ]
 
