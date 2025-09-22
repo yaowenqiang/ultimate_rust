@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/dashing/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/deadlocks/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/divide_work/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/errors/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/footgun/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/footgun_fixed/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/footgun_manual/src" isTestSource="false" />
