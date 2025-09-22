@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/authentication/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blocking/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/channels1/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cpu_affinity/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/dashing/src" isTestSource="false" />

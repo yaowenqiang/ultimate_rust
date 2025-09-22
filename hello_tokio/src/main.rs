@@ -1,5 +1,5 @@
 //! hello_tokio 示例
-//! 
+//!
 //! 本示例展示了如何：
 //! - 使用 `#[tokio::main]` 宏启动 Tokio 运行时（单线程 current_thread 风格）
 //! - 通过 `tokio::spawn` 在运行时中并发地运行多个异步任务
@@ -94,9 +94,9 @@ async fn main() {
     //    文档：https://docs.rs/tokio/latest/tokio/fn.spawn.html
 
     let _ = tokio::join!(
-        tokio::spawn(hello()),   // 返回 JoinHandle<u32>
-        tokio::spawn(ticker()),  // 返回 JoinHandle<()>
-        tokio::spawn(ticker()),  // 再起一个滴答器任务
+        tokio::spawn(hello()),  // 返回 JoinHandle<u32>
+        tokio::spawn(ticker()), // 返回 JoinHandle<()>
+        tokio::spawn(ticker()), // 再起一个滴答器任务
     );
 
     // 提示：如果你需要逐个收集 JoinHandle 的结果，也可以使用 JoinSet：
