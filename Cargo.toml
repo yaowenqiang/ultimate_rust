@@ -15,4 +15,4 @@ members = ["authentication",
     "authentication",
     "login",
     "login_manager"
-    , "threads_demo", "divide_work", "my_thread", "scoped_thread", "footgun", "footgun_fixed", "footgun_manual", "mutex_demo", "read_write_lock_demo", "deadlocks", "dashing", "parking", "channels1", "threadpool_workers", "work_queue", "cpu_affinity", "thread_proi", "rayon_iters", "rayon_scopes", "hello_async", "hello_tokio", "blocking"]
+    , "threads_demo", "divide_work", "my_thread", "scoped_thread", "footgun", "footgun_fixed", "footgun_manual", "mutex_demo", "read_write_lock_demo", "deadlocks", "dashing", "parking", "channels1", "threadpool_workers", "work_queue", "cpu_affinity", "thread_proi", "rayon_iters", "rayon_scopes", "hello_async", "hello_tokio", "blocking", "tokio_test"]

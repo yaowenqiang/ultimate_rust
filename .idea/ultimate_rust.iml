@@ -29,6 +29,7 @@
       <sourceFolder url="file://$MODULE_DIR$/thread_proi/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/threadpool_workers/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/threads_demo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tokio_test/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/variables/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/work_queue/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
