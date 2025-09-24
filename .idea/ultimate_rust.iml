@@ -25,12 +25,15 @@
       <sourceFolder url="file://$MODULE_DIR$/rayon_iters/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rayon_scopes/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/read_write_lock_demo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/restclient/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scoped_thread/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tcpserver/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/thread_priority/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/thread_proi/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/threadpool_workers/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/threads_demo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tokio_tcpclient/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_test/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/variables/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/work_queue/src" isTestSource="false" />
