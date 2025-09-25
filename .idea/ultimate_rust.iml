@@ -34,6 +34,8 @@
       <sourceFolder url="file://$MODULE_DIR$/threadpool_workers/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/threads_demo/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_channels/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tokio_select/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tokio_share_state/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_tcpclient/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_test/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/variables/src" isTestSource="false" />

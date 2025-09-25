@@ -1733,6 +1733,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio_select"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "tokio",
+]
+
+[[package]]
+name = "tokio_share_state"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "tokio",
+]
+
+[[package]]
 name = "tokio_tcpclient"
 version = "0.1.0"
 dependencies = [
