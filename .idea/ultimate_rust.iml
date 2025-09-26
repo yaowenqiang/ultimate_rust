@@ -25,6 +25,7 @@
       <sourceFolder url="file://$MODULE_DIR$/rayon_iters/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rayon_scopes/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/read_write_lock_demo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/recursion/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/restclient/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scoped_thread/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
@@ -34,6 +35,7 @@
       <sourceFolder url="file://$MODULE_DIR$/threadpool_workers/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/threads_demo/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_channels/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tokio_pending/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_select/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_share_state/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_tcpclient/src" isTestSource="false" />
