@@ -21,3 +21,10 @@
 > cargo add serde-json
 
 > cargo install --locked tokio-console
+>
+> cargo install sqlx-cli
+>
+> sqlx database create
+> sqlx migrate add initial
+>
+> sqlx migrate run
