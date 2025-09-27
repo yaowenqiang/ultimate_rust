@@ -13,9 +13,11 @@
 # create project
 
 > cargo new hello_world
-> 
+>
 > cargo new --lib authentication
-> 
+>
 > cargo add serde -F derive
-> 
+>
 > cargo add serde-json
+
+> cargo install --locked tokio-console

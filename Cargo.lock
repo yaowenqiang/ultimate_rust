@@ -2581,6 +2581,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio_console_demo"
+version = "0.1.0"
+dependencies = [
+ "console-subscriber",
+ "tokio",
+]
+
+[[package]]
 name = "tokio_pending"
 version = "0.1.0"
 dependencies = [
