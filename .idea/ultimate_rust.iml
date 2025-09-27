@@ -19,6 +19,7 @@
       <sourceFolder url="file://$MODULE_DIR$/hello_world/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/login/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/login_manager/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/logspan/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/mutex_demo/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/my_thread/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/parking/src" isTestSource="false" />
