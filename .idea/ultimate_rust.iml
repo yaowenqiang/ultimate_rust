@@ -45,6 +45,8 @@
       <sourceFolder url="file://$MODULE_DIR$/tokio_test/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/variables/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/work_queue/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/thumbs/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tokio_web_service/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
