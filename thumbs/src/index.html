@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Awesome Thumbnail Server</title>
+</head>
+<body>
+<h1>Welcome to the thumbnail server</h1>
+<div id="thumbnails">
+</div>
+<br>
+<h2>Add an image</h2>
+<form action="/upload" enctype="multipart/form-data" method="post">
+    <input name="tags" placeholder="Tags" type="text" value="">
+    <br>
+    <input name="image" type="file"/>
+    <br>
+    <input type="submit" value="Upload New Image">
+</form>
+</body>
+</html>
