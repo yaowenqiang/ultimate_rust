@@ -23,6 +23,7 @@ use axum::response::{Html, IntoResponse};
 use axum::routing::{get, post};
 use axum::{Extension, Router};
 use sqlx::Row;
+use std::fmt::format;
 use tokio_util::io::ReaderStream;
 
 /// 程序入口点
@@ -65,10 +66,10 @@ async fn main() -> anyhow::Result<()> {
     // Router 是 Axum 的核心组件，用于组织 HTTP 路由
     // 参考: https://docs.rs/axum/latest/axum/struct.Router.html
     let app = Router::new()
-        .route("/", get(index_page))           // 主页
-        .route("/upload", post(uploader))      // 图片上传端点
-        .route("/image/{id}", get(get_image))  // 图片获取端点
-        .layer(Extension(pool));               // 注入数据库连接池
+        .route("/", get(index_page)) // 主页
+        .route("/upload", post(uploader)) // 图片上传端点
+        .route("/image/{id}", get(get_image)) // 图片获取端点
+        .layer(Extension(pool)); // 注入数据库连接池
 
     // 6. 创建 TCP 监听器
     // 绑定到本地地址和端口
@@ -103,7 +104,7 @@ async fn test(Extension(pool): Extension<sqlx::Pool<sqlx::Sqlite>>) -> String {
     // sqlx::query 用于创建 SQL 查询语句
     // 参考: https://docs.rs/sqlx/latest/sqlx/fn.query.html
     let result = sqlx::query("SELECT count(id) FROM images")
-        .fetch_one(&pool)  // 获取单个结果
+        .fetch_one(&pool) // 获取单个结果
         .await
         .unwrap();
 
@@ -173,8 +174,8 @@ async fn uploader(
     mut multipart: Multipart,
 ) -> String {
     // 初始化变量来存储上传的数据
-    let mut tags = None;    // 存储标签字符串
-    let mut image = None;   // 存储图片二进制数据
+    let mut tags = None; // 存储标签字符串
+    let mut image = None; // 存储图片二进制数据
 
     // 遍历多部分表单的所有字段
     // multipart.next_field() 返回表单中的下一个字段
@@ -248,8 +249,8 @@ async fn insert_image_into_database(
     // 使用 ? 作为占位符可以防止 SQL 注入
     // 参考: https://docs.rs/sqlx/latest/sqlx/fn.query.html
     let row = sqlx::query("INSERT INTO images(tags) values (?) RETURNING id")
-        .bind(tags)    // 绑定参数，自动处理类型转换和安全性
-        .fetch_one(pool)  // 期望返回单行结果
+        .bind(tags) // 绑定参数，自动处理类型转换和安全性
+        .fetch_one(pool) // 期望返回单行结果
         .await?;
 
     // 从返回的行中提取 ID（第一列）
@@ -357,6 +358,19 @@ async fn get_image(Path(id): Path<i64>) -> impl IntoResponse {
             header::CONTENT_TYPE,
             header::HeaderValue::from_static("image/png"),
         )
-        .body(body)  // 使用流式 body
+        .body(body) // 使用流式 body
         .unwrap()
+}
+fn make_thumbnail(id: i64) -> anyhow::Result<()> {
+    let image_path = format!("image/{id}.jpg");
+    let thumbnail_path = format!("image/{id}_thumb.jpg");
+    let image_bytes = std::fs::read(image_path)?;
+    let image = if let Ok(format) = image::guess_format(&image_bytes) {
+        image::load_from_memory_with_format(&image_bytes, format)?
+    } else {
+        image::load_from_memory(&image_bytes)?
+    };
+    let thumbnail = image.thumbnail(100, 100);
+    thumbnail.save(thumbnail_path)?;
+    Ok(())
 }
