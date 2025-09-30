@@ -4,3 +4,4 @@ tokio_db/tokio_db.db-wal
 *.db
 *.db-wal
 *.db-shm
+*.png

@@ -2,14 +2,59 @@
 name = "thumbs"
 version = "0.1.0"
 edition = "2024"
+authors = ["Your Name <your.email@example.com>"]
+description = "一个基于 Rust 和 Axum 的简单图片上传服务器"
+license = "MIT"
+repository = "https://github.com/yourusername/thumbs"
+homepage = "https://github.com/yourusername/thumbs"
+documentation = "https://docs.rs/thumbs"
+keywords = ["web", "image", "upload", "axum", "sqlite"]
+categories = ["web-programming", "multimedia::images"]
 
 [dependencies]
+# 错误处理 - 提供便捷的错误类型和上下文
+# 文档: https://docs.rs/anyhow
 anyhow = "1.0.100"
+
+# Web 框架 - 高性能的异步 Web 框架
+# 文档: https://docs.rs/axum
+# GitHub: https://github.com/tokio-rs/axum
 axum = { version = "0.8.4", features = ["multipart"] }
+
+# 环境变量管理 - 从 .env 文件加载环境变量
+# 文档: https://docs.rs/dotenv
+# GitHub: https://github.com/dotenv-rs/dotenv
 dotenv = "0.15.0"
+
+# 异步工具 - 提供异步编程的实用工具
+# 文档: https://docs.rs/futures
 futures = "0.3.31"
+
+# 图片处理 - 支持多种图片格式的编解码和处理
+# 文档: https://docs.rs/image
+# GitHub: https://github.com/image-rs/image
 image = "0.25.8"
+
+# 序列化/反序列化 - Rust 数据结构的序列化框架
+# 文档: https://docs.rs/serde
+# GitHub: https://github.com/serde-rs/serde
 serde = { version = "1.0.228", features = ["derive"] }
+
+# 异步 SQL 工具包 - 类型安全的 SQL 查询
+# 文档: https://docs.rs/sqlx
+# GitHub: https://github.com/launchbadge/sqlx
 sqlx = { version = "0.8.6", features = ["runtime-tokio-native-tls", "sqlite"] }
+
+# 异步运行时 - Rust 的异步编程运行时
+# 文档: https://tokio.rs/tokio/tutorial
+# GitHub: https://github.com/tokio-rs/tokio
 tokio = { version = "1.47.1", features = ["full"] }
+
+# Tokio 工具集 - 为 Tokio 提供额外的工具和抽象
+# 文档: https://docs.rs/tokio-util
+# GitHub: https://github.com/tokio-rs/tokio-util
 tokio-util = { version = "0.7.16", features = ["io"] }
+
+[[bin]]
+name = "thumbs"
+path = "src/main.rs"
