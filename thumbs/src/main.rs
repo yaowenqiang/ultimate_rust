@@ -22,8 +22,10 @@ use axum::http::header;
 use axum::response::{Html, IntoResponse};
 use axum::routing::{get, post};
 use axum::{Extension, Router};
+use futures::{StreamExt, TryStreamExt};
 use sqlx::Row;
 use std::fmt::format;
+use tokio::task::spawn_blocking;
 use tokio_util::io::ReaderStream;
 
 /// 程序入口点
@@ -372,5 +374,19 @@ fn make_thumbnail(id: i64) -> anyhow::Result<()> {
     };
     let thumbnail = image.thumbnail(100, 100);
     thumbnail.save(thumbnail_path)?;
+    Ok(())
+}
+
+async fn fill_missing_thumbnails(pool: sqlx::Pool<sqlx::Sqlite>) -> anyhow::Result<()> {
+    let mut rows = sqlx::query("select id from images").fetch(&pool);
+
+    while let Some(row) = rows.try_next().await? {
+        let id = row.get::<i64, _>(0);
+        let thumbnail_path = format!("images/{id}_thumb.jpg");
+        if !std::path::Path::new(&thumbnail_path).exists() {
+            spawn_blocking(move || make_thumbnail(id)).await??;
+        }
+    }
+
     Ok(())
 }
