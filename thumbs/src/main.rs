@@ -21,10 +21,10 @@ use axum::extract::{Multipart, Path};
 use axum::http::header;
 use axum::response::{Html, IntoResponse};
 use axum::routing::{get, post};
-use axum::{Extension, Router};
-use futures::{StreamExt, TryStreamExt};
-use sqlx::Row;
-use std::fmt::format;
+use axum::{Extension, Json, Router};
+use futures::TryStreamExt;
+use serde::{Deserialize, Serialize};
+use sqlx::{FromRow, Row};
 use tokio::task::spawn_blocking;
 use tokio_util::io::ReaderStream;
 
@@ -62,6 +62,8 @@ async fn main() -> anyhow::Result<()> {
     // 自动执行 migrations 目录中的 SQL 文件，确保数据库结构是最新的
     // 参考: https://docs.rs/sqlx/latest/sqlx/macro.migrate.html
     sqlx::migrate!("./migrations").run(&pool).await?;
+
+    fill_missing_thumbnails(&pool).await?;
 
     // 5. 配置 Axum 路由
     // 创建路由器并注册各个处理函数
@@ -214,6 +216,10 @@ async fn uploader(
 
         // 2. 然后将图片文件保存到磁盘
         save_image(new_image_id, &image).await.unwrap();
+
+        spawn_blocking(move || {
+            make_thumbnail(new_image_id).unwrap();
+        });
     } else {
         // 如果缺少必需字段则 panic
         panic!("missing field");
@@ -377,8 +383,8 @@ fn make_thumbnail(id: i64) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn fill_missing_thumbnails(pool: sqlx::Pool<sqlx::Sqlite>) -> anyhow::Result<()> {
-    let mut rows = sqlx::query("select id from images").fetch(&pool);
+async fn fill_missing_thumbnails(pool: &sqlx::Pool<sqlx::Sqlite>) -> anyhow::Result<()> {
+    let mut rows = sqlx::query("select id from images").fetch(pool);
 
     while let Some(row) = rows.try_next().await? {
         let id = row.get::<i64, _>(0);
@@ -389,4 +395,18 @@ async fn fill_missing_thumbnails(pool: sqlx::Pool<sqlx::Sqlite>) -> anyhow::Resu
     }
 
     Ok(())
+}
+
+#[derive(Deserialize, Serialize, FromRow, Debug)]
+struct ImageRecord {
+    id: i32,
+    tag: String,
+}
+
+async fn list_images(Extension(pool): Extension<sqlx::SqlitePool>) -> Json<Vec<ImageRecord>> {
+    sqlx::query_as::<_, ImageRecord>("select id, tags from images order by id")
+        .fetch_all(&pool)
+        .await
+        .unwrap()
+        .into()
 }
