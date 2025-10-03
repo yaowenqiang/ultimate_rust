@@ -17,6 +17,7 @@
 //! - POST /upload: 上传图片和标签
 //! - GET /image/{id}: 获取指定ID的图片
 
+use axum::Form;
 use axum::extract::{Multipart, Path};
 use axum::http::header;
 use axum::response::{Html, IntoResponse};
@@ -27,7 +28,6 @@ use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, Row};
 use tokio::task::spawn_blocking;
 use tokio_util::io::ReaderStream;
-
 /// 程序入口点
 ///
 /// # 返回值
@@ -503,7 +503,7 @@ async fn get_image(Path(id): Path<i64>) -> impl IntoResponse {
     // 可以设置各种 HTTP 头部和自定义响应体
     axum::response::Response::builder()
         .header(
-            header::CONTENT_TYPE, // 设置 Content-Type 头部
+            header::CONTENT_TYPE,                          // 设置 Content-Type 头部
             header::HeaderValue::from_static("image/png"), // 静态字符串，避免运行时分配
         )
         .body(body) // 使用流式 body
@@ -918,9 +918,37 @@ async fn get_thumbnail(Path(id): Path<i64>) -> impl IntoResponse {
     // 可以设置各种 HTTP 头部和自定义响应体
     axum::response::Response::builder()
         .header(
-            header::CONTENT_TYPE, // 设置内容类型为 PNG 图片
+            header::CONTENT_TYPE,                          // 设置内容类型为 PNG 图片
             header::HeaderValue::from_static("image/png"), // 使用静态字符串避免运行时分配
         )
         .body(body) // 使用流式 body
         .unwrap()
+}
+
+#[derive(Serialize)]
+struct Search {
+    tags: String,
+}
+
+async fn search_images(
+    Extension(pool): Extension<sqlx::SqlitePool>,
+    Form(form): Form<Search>,
+) -> Html<String> {
+    let tag = format!("%{}%", form.tags);
+    let rows = sqlx::query_as::<_, ImageRecord>(
+        "select id, tags from images where tags like ? order by id",
+    )
+    .bind(tag)
+    .fetch_all(&pool)
+    .await
+    .unwrap();
+
+    let mut results = String::new();
+    for row in rows {
+        results.push_str(&format!(
+            "<a href='/image/{}'><img src='/thumb/{}' /></a><br />",
+            row.id, row.tags
+        ));
+    }
+    Html(results)
 }
