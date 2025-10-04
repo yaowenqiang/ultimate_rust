@@ -19,7 +19,7 @@ fn main() {
 
 /// # Safety
 ///
-/// /// This function is unsafe because ...
+/// This function is unsafe because ...
 ///
 unsafe fn my_fn() {
     let my_ves = vec![1, 2, 3, 4, 5];
