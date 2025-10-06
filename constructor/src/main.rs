@@ -1,5 +1,4 @@
-use std::sync::Arc;
-
+use std::alloc::{Layout, alloc, dealloc};
 struct MyStruct {
     n: i32,
 }
@@ -21,6 +20,45 @@ impl Drop for MyStruct {
     }
 }
 
+struct SmartPointer<T> {
+    ptr: *mut u8,
+    data: *mut T,
+    layout: Layout,
+}
+
+impl<T> SmartPointer<T> {
+    pub fn new() -> SmartPointer<T> {
+        println!("Allocating memory for SmartPointer");
+        unsafe {
+            let layout = Layout::new::<T>();
+            let ptr: *mut u8 = alloc(layout);
+            SmartPointer {
+                ptr,
+                data: ptr as *mut T,
+                layout,
+            }
+        }
+    }
+    fn set(&mut self, val: T) {
+        unsafe {
+            *self.data = val;
+        }
+    }
+
+    fn get(&self) -> &T {
+        unsafe { self.data.as_ref().unwrap() }
+    }
+}
+
+impl<T> Drop for SmartPointer<T> {
+    fn drop(&mut self) {
+        println!("Deallocating memory for SmartPointer");
+        unsafe {
+            dealloc(self.ptr, self.layout);
+        }
+    }
+}
+
 fn move_me(x: MyStruct) {}
 
 fn main() {
@@ -35,4 +73,11 @@ fn main() {
         x: MyStruct::new(10),
     };
     println!("Ending the main function");
+
+    let mut my_num: SmartPointer<i32> = SmartPointer::<i32>::new();
+    my_num.set(1);
+    println!("my_num = {}", my_num.get());
+
+    let my_num = Box::new(12);
+    println!("my_num = {}", my_num);
 }

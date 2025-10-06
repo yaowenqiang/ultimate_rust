@@ -2,5 +2,11 @@
 name = "unsafe_demo"
 version = "0.1.0"
 edition = "2024"
+authors = ["Your Name <your.email@example.com>"]
+description = "Rust unsafe 代码演示项目 - 教育用途"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/ultimate_rust"
+keywords = ["rust", "unsafe", "education", "memory-safety"]
+categories = ["education", "development-tools"]
 
 [dependencies]
