@@ -1,0 +1,29 @@
+[package]
+name = "lifetimes"
+version = "0.1.0"
+edition = "2024"
+
+# Rust 生命周期(Lifetimes)示例项目
+#
+# 本项目全面演示了 Rust 中生命周期的概念和用法，包括：
+# - 函数生命周期参数和返回值生命周期
+# - 结构体生命周期注解
+# - 借用检查器的工作原理
+# - 生命周期省略规则
+# - 静态生命周期 'static
+# - 多个生命周期参数
+# - 生命周期子类型化
+# - 复杂的生命周期场景（Context/Parser 模式）
+# - 常见的生命周期错误和陷阱
+#
+# 项目文件结构：
+# - src/main.rs: 主要的生命周期示例和演示
+# - src/lifetime_errors.rs: 常见生命周期错误示例（用于学习）
+#
+# 相关文档：
+# - Rust Book 第10章: https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html
+# - Rust Reference: https://doc.rust-lang.org/reference/lifetime-elision.html
+# - Rust by Example: https://doc.rust-lang.org/rust-by-example/scope/lifetime.html
+# - Rustonomicon: https://doc.rust-lang.org/nomicon/lifetimes.html
+
+[dependencies]
