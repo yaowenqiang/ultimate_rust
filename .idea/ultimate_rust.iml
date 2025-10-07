@@ -46,9 +46,12 @@
       <sourceFolder url="file://$MODULE_DIR$/variables/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/work_queue/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/constructor/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lifetimes/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/memory/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ref_count/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/thumbs/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tokio_web_service/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/traits/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/unsafe_demo/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
