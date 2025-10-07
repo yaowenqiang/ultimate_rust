@@ -3,7 +3,9 @@
     "allow": [
       "Bash(cargo check:*)",
       "Bash(cargo run:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Read(//Users/yaojack/Code/rust_project/ultimate_rust/**)"
     ],
     "deny": [],
     "ask": []
