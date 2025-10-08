@@ -1,0 +1,10 @@
+[package]
+name = "cycles"
+version = "0.1.0"
+edition = "2021"
+authors = ["Rust学习者"]
+description = "Rust 循环引用和内存管理深入学习示例"
+license = "MIT"
+repository = "https://github.com/example/rust-cycles"
+
+[dependencies]
