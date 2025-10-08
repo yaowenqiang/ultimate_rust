@@ -1,0 +1,20 @@
+[package]
+name = "packing"
+version = "0.1.0"
+edition = "2021"
+authors = ["Rust学习者"]
+description = "Rust 内存打包和对齐深入学习示例"
+license = "MIT"
+repository = "https://github.com/example/rust-packing"
+
+[dependencies]
+# 序列化和反序列化支持
+serde = { version = "1.0", features = ["derive"] }
+# JSON 序列化
+serde_json = "1.0"
+# 二进制序列化
+bincode = "1.3"
+# 字节序处理
+byteorder = "1.4"
+# 位操作辅助
+bitflags = "2.0"
