@@ -1,9 +1,18 @@
 [package]
 name = "memory_fragmentation"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+authors = ["Rust学习者"]
+description = "Rust 内存碎片化和内存管理深入学习示例"
+license = "MIT"
+repository = "https://github.com/example/rust-memory-fragmentation"
 
 [dependencies]
-bumpalo = "3.19.0"
+# Arena 分配器 - 快速的内存池分配器
+bumpalo = { version = "3.19.0", features = ["collections"] }
+# Jemalloc 分配器 - 高性能的内存分配器
 jemallocator = "0.5.4"
+# Slab 分配器 - 用于存储固定大小对象的分配器
 slab = "0.4.11"
+# 随机数生成器，用于测试数据
+rand = "0.8"
