@@ -17,24 +17,34 @@ generics/
 ### 泛型基础概念
 
 1. **泛型结构体 (Generic Structs)**
-   - `GroupedHashMap<K, V>`: 泛型哈希映射桶
-   - 多个泛型参数的使用
-   - where 子句约束
+   - `GroupedHashMap<K, V>`: 泛型哈希映射桶，支持多值存储
+   - 多个泛型参数的使用和约束
+   - where 子句约束，提高代码可读性
+   - 自定义迭代器实现 `HashMapBucketIter`
 
 2. **泛型函数 (Generic Functions)**
-   - `display_two_values<T, U>`: 多类型参数函数
-   - `compare_and_display<T>`: 单类型参数函数
-   - `calculate_sine()`: impl Trait 语法
+   - `display_two_values<T, U>`: 多类型参数函数演示
+   - `compare_and_display<T>`: 单类型参数比较函数
+   - `calculate_sine()`: impl Trait 语法简化函数签名
+   - 泛型约束和 trait bounds 的实际应用
 
 3. **类型转换 (Type Conversion)**
-   - `From` trait 实现
-   - `Into` trait 使用
-   - 自定义类型转换
+   - `From` trait 实现和 `Into` trait 使用
+   - 角度单位转换系统 (度数 ↔ 弧度)
+   - 类型转换链演示和实际应用场景
+   - 三角函数计算和数学运算示例
 
-4. **角度单位示例**
-   - `AngleDegrees`: 度数类型
-   - `AngleRadians`: 弧度类型
-   - 相互转换实现
+4. **自定义迭代器 (Custom Iterator)**
+   - `HashMapBucketIter<'a, K, V>`: 生命周期与泛型结合
+   - 复杂迭代逻辑实现：扁平化遍历嵌套结构
+   - 迭代器链式操作：filter、map、collect 等
+   - 惰性求值和性能优势演示
+
+5. **高级泛型特性**
+   - 泛型常量和类型别名
+   - 复杂的 trait bounds 和多重约束
+   - 浮点数精度比较和解决方案
+   - Unicode 字符串比较和中文字符处理
 
 ## 🚀 运行项目
 
@@ -51,14 +61,29 @@ cargo build --release
 
 ## 📖 示例输出
 
-运行 `cargo run` 将展示以下概念的实际演示：
+运行 `cargo run` 将展示以下概念的详细演示：
 
-1. **泛型函数示例** - 多类型参数的函数调用
-2. **泛型比较示例** - 不同类型的值比较
-3. **类型转换示例** - From/Into trait 的使用
-4. **impl Trait 语法示例** - 简化的函数签名
-5. **泛型结构体示例** - 类型安全的容器使用
-6. **高级泛型特性** - 泛型常量、类型别名等
+### 🔰 基础泛型概念
+1. **泛型函数示例** - 多类型参数的函数调用，包括混合类型
+2. **全面比较示例** - 整数、浮点数、字符串、字符、Unicode 字符比较
+3. **浮点数精度专题** - 演示浮点数比较陷阱和解决方案
+
+### 🔄 类型转换系统
+4. **角度转换示例** - 完整的度数 ↔ 弧度转换系统
+5. **类型转换链演示** - From/Into trait 的实际应用
+6. **三角函数计算** - 数学运算中的类型转换应用
+
+### 📊 高级特性演示
+7. **泛型结构体示例** - 类型安全的多值哈希容器
+8. **自定义迭代器演示** - 复杂迭代逻辑的完整实现
+9. **迭代器链式操作** - filter、map、collect 等函数式编程
+10. **性能对比演示** - 迭代器 vs 传统循环的性能分析
+
+### 🎯 实际应用场景
+- 常用角度对照表 (0°, 30°, 45°, 60°, 90°, 180°, 270°, 360°)
+- 三角函数值计算和显示
+- 技术栈分类和统计 (编程语言、数据库、框架)
+- Unicode 字符和中文字符串处理
 
 ## 🔗 相关文档
 
@@ -103,6 +128,9 @@ cargo build --release
 - `AngleDegrees`, `AngleRadians`: 清晰的类型名
 - `display_two_values`: 动词开头的函数名
 - `angle_in_degrees`: 描述性的变量名
+- `HashMapBucketIter`: 自定义迭代器名
+- `create_bucket_iterator`: 动词开头的迭代器创建方法
+- `current_map_entry`: 描述性的迭代器状态字段名
 
 ### 详细的中文注释
 - 每个概念都有详细的中文解释
