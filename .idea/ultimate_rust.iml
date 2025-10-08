@@ -54,9 +54,11 @@
       <sourceFolder url="file://$MODULE_DIR$/tokio_web_service/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/traits/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/unsafe_demo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/bytes/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cycles/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/iterators/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/memory_fragmentation/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packing/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

@@ -5,7 +5,9 @@
       "Bash(cargo run:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Read(//Users/yaojack/Code/rust_project/ultimate_rust/**)"
+      "Read(//Users/yaojack/Code/rust_project/ultimate_rust/**)",
+      "Bash(git push:*)",
+      "Bash(timeout:*)"
     ],
     "deny": [],
     "ask": []
