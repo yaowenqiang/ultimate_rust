@@ -1,160 +1,299 @@
-//! Memory Management Examples in Rust
-//!
-//! This demo showcases various memory management techniques in Rust:
-//! - Using libc for C-style memory allocation
-//! - Using Rust's std::alloc for manual memory management
-//! - Stack vs heap allocation patterns
-//! - Memory safety with unsafe blocks
-//!
-//! # Documentation Links:
-//! - Rust Book Memory Management: https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html
-//! - std::alloc module: https://doc.rust-lang.org/std/alloc/index.html
-//! - Unsafe Rust: https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html
-//! - libc crate: https://docs.rs/libc/latest/libc/
+/*
+ * Rust 内存管理深入学习示例
+ *
+ * 本项目展示了 Rust 中各种内存管理技术，从基础概念到高级应用，
+ * 包含详细的中文注释、实用示例和最佳实践指导。
+ *
+ * 📚 官方文档链接：
+ *
+ * 🔰 基础概念
+ * 1. Rust Book - 所有权系统:
+ *    https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html
+ *
+ * 2. Rust Book - 借用和切片:
+ *    https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html
+ *
+ * 3. Rust Book - 生命周期:
+ *    https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html
+ *
+ * ⚙️ 内存管理
+ * 4. std::alloc 模块:
+ *    https://doc.rust-lang.org/std/alloc/index.html
+ *
+ * 5. 智能指针详解:
+ *    https://doc.rust-lang.org/book/ch15-00-smart-pointers.html
+ *
+ * 6. 不安全 Rust:
+ *    https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html
+ *
+ * 🚀 高级概念
+ * 7. Rustonomicon (不安全 Rust 指南):
+ *    https://doc.rust-lang.org/nomicon/
+ *
+ * 8. 全局分配器:
+ *    https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html
+ *
+ * 9. 内存布局和对齐:
+ *    https://doc.rust-lang.org/reference/type-layout.html
+ *
+ * 10. C 互操作:
+ *     https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html#calling-c-functions-from-rust
+ */
 
-use libc;
+use libc; // C 库接口，用于 C 风格的内存分配
 
-/// Demonstrates C-style memory allocation using libc
-/// This shows how Rust can interface with C memory management functions
+/// 演示使用 libc 进行 C 风格的内存分配
+///
+/// 这个函数展示了如何在 Rust 中使用 C 库函数进行内存管理：
+/// - 使用 malloc 分配内存
+/// - 手动写入和读取内存
+/// - 使用 free 释放内存
+/// - 展示了 Rust 与 C 代码的互操作性
+///
+/// ⚠️ 重要提示：在 Rust 中通常应该使用 std::alloc 或智能指针，
+/// 这个例子主要用于演示与 C 代码的互操作
 fn allocate_memory_with_libc() {
-    println!("=== C-style Memory Allocation with libc ===");
+    println!("=== 使用 libc 进行 C 风格内存分配 ===");
 
     unsafe {
-        // Allocate memory for an i32 using malloc
+        // 使用 malloc 为 i32 分配内存
+        // malloc 返回 void*，需要转换为具体的类型指针
         let my_num = libc::malloc(std::mem::size_of::<i32>()) as *mut i32;
 
-        // Check if allocation succeeded
+        // 检查分配是否成功
+        // malloc 在内存不足时会返回 NULL
         if my_num.is_null() {
-            panic!("Failed to allocate memory");
+            panic!("内存分配失败");
         }
 
-        println!("Allocated {} bytes for i32 at address: {:p}",
+        println!("为 i32 分配了 {} 字节，地址: {:p}",
                 std::mem::size_of::<i32>(), my_num);
 
-        // Write a value to the allocated memory
+        // 向分配的内存写入值
+        // 通过解引用裸指针来访问内存
         *my_num = 42;
-        println!("Wrote value {} to allocated memory", *my_num);
+        println!("向分配的内存写入值: {}", *my_num);
 
-        // Read and verify the value
+        // 读取并验证值
         assert_eq!(42, *my_num);
-        println!("Verified value: {}", *my_num);
+        println!("验证值: {}", *my_num);
 
-        // Free the allocated memory
+        // 释放分配的内存
+        // 必须使用 free 释放 malloc 分配的内存
         libc::free(my_num as *mut std::ffi::c_void);
-        println!("Memory freed successfully");
+        println!("内存释放成功");
     }
 }
 
-/// Demonstrates Rust's manual memory allocation using std::alloc
-/// This is the more idiomatic Rust approach for manual memory management
+/// 演示使用 Rust 的 std::alloc 进行手动内存分配
+///
+/// 这个函数展示了 Rust 原生的内存分配方式：
+/// - 使用 Layout 描述内存布局
+/// - 使用 alloc 分配内存
+/// - 使用 dealloc 释放内存
+/// - 比 libc 更符合 Rust 的惯用做法
+///
+/// 优点：
+/// - 类型安全的 Layout 系统
+/// - 更好的错误处理
+/// - 与 Rust 生态系统集成更好
 fn allocate_memory_with_rust() {
-    println!("\n=== Rust Manual Memory Allocation with std::alloc ===");
+    println!("\n=== 使用 Rust std::alloc 进行手动内存分配 ===");
 
-    use std::alloc::{Layout, alloc, dealloc};
+    use std::alloc::{Layout, alloc, dealloc}; // 内存分配模块
 
     unsafe {
-        // Create a layout for a u32
+        // 为 u32 创建内存布局
+        // Layout 包含了类型的大小和对齐要求
         let layout = Layout::new::<u32>();
-        println!("Created layout for u32: {} bytes", layout.size());
+        println!("为 u32 创建内存布局: {} 字节", layout.size());
 
-        // Allocate memory
+        // 分配内存
+        // alloc 返回 *mut u8，需要根据布局进行类型转换
         let ptr = alloc(layout);
-        println!("Allocated memory at address: {:p}", ptr);
+        println!("分配内存地址: {:p}", ptr);
 
-        // Write a value
-        *ptr = 42;
-        println!("Wrote value {} to allocated memory", *ptr);
+        // 写入值
+        // 需要将指针转换为正确的类型
+        *(ptr as *mut u32) = 42;
+        println!("向分配的内存写入值: {}", *(ptr as *mut u32));
 
-        // Read and verify
-        assert_eq!(42, *ptr);
-        println!("Verified value: {}", *ptr);
+        // 读取并验证
+        assert_eq!(42, *(ptr as *mut u32));
+        println!("验证值: {}", *(ptr as *mut u32));
 
-        // Deallocate memory
+        // 释放内存
+        // 必须传入相同的 layout 以确保正确释放
         dealloc(ptr, layout);
-        println!("Memory deallocated successfully");
+        println!("内存释放成功");
     }
 }
 
-/// Demonstrates stack vs heap allocation differences
+/// 演示栈分配与堆分配的区别
+///
+/// 这个函数展示了 Rust 中两种主要的内存分配方式：
+/// - 栈分配：快速、自动清理、固定大小
+/// - 堆分配：较慢、手动管理、动态大小
+///
+/// 选择原则：
+/// - 大小已知且较小 → 栈分配
+/// - 大小未知或较大 → 堆分配
+/// - 需要在作用域外存在 → 堆分配
 fn demonstrate_stack_vs_heap() {
-    println!("\n=== Stack vs Heap Allocation ===");
+    println!("\n=== 栈分配与堆分配对比 ===");
 
-    // Stack allocation - fast, automatic cleanup
+    // 栈分配 - 快速、自动清理
+    // 局部变量默认在栈上分配
+    // 在作用域结束时自动释放
     let stack_var = 100;
-    println!("Stack variable: {} (stored on stack)", stack_var);
+    println!("栈变量: {} (存储在栈上)", stack_var);
 
-    // Heap allocation using Box - slower, requires cleanup
+    // 堆分配使用 Box - 较慢、需要清理
+    // Box 将数据分配到堆上，栈上只保存指针
     let heap_var = Box::new(200);
-    println!("Heap variable: {} (stored on heap at {:p})", heap_var, heap_var);
+    println!("堆变量: {} (存储在堆上，地址: {:p})", heap_var, heap_var);
 
-    // Vector demonstrates heap allocation for collections
+    // Vector 演示集合的堆分配
+    // Vector 本身在栈上，但元素存储在堆上
     let mut vec = Vec::new();
     vec.push(1);
     vec.push(2);
     vec.push(3);
-    println!("Vector on heap: {:?} (capacity: {})", vec, vec.capacity());
+    println!("堆上的 Vector: {:?} (容量: {})", vec, vec.capacity());
+
+    // 内存使用情况对比
+    println!("\n内存使用对比:");
+    println!("  栈变量大小: {} 字节", std::mem::size_of_val(&stack_var));
+    println!("  Box 指针大小: {} 字节 (数据在堆上)", std::mem::size_of_val(&heap_var));
+    println!("  Vec 头部大小: {} 字节 (元素在堆上)", std::mem::size_of_val(&vec));
 }
 
-/// Demonstrates memory layout and size information
+/// 演示内存布局和大小信息
+///
+/// 这个函数展示了 Rust 中各种类型的内存特性：
+/// - 类型大小 (size_of)
+/// - 内存对齐 (align_of)
+/// - 指针类型大小
+///
+/// 理解内存布局对于性能优化和 FFI (Foreign Function Interface) 很重要
 fn demonstrate_memory_layout() {
-    println!("\n=== Memory Layout Information ===");
+    println!("\n=== 内存布局信息 ===");
 
-    println!("Size of various types:");
-    println!("  i32: {} bytes", std::mem::size_of::<i32>());
-    println!("  i64: {} bytes", std::mem::size_of::<i64>());
-    println!("  f64: {} bytes", std::mem::size_of::<f64>());
-    println!("  Box<i32>: {} bytes", std::mem::size_of::<Box<i32>>());
-    println!("  Vec<i32>: {} bytes", std::mem::size_of::<Vec<i32>>());
+    // 基本类型大小
+    println!("各种类型的大小:");
+    println!("  i32: {} 字节", std::mem::size_of::<i32>());
+    println!("  i64: {} 字节", std::mem::size_of::<i64>());
+    println!("  f64: {} 字节", std::mem::size_of::<f64>());
+    println!("  bool: {} 字节", std::mem::size_of::<bool>());
+    println!("  char: {} 字节", std::mem::size_of::<char>());
 
-    // Alignment information
-    println!("Alignment of various types:");
-    println!("  i32: {} bytes", std::mem::align_of::<i32>());
-    println!("  i64: {} bytes", std::mem::align_of::<i64>());
+    // 指针类型大小
+    println!("\n指针类型大小:");
+    println!("  Box<i32>: {} 字节", std::mem::size_of::<Box<i32>>());
+    println!("  &i32: {} 字节", std::mem::size_of::<&i32>());
+    println!("  *mut i32: {} 字节", std::mem::size_of::<*mut i32>());
+    println!("  Vec<i32>: {} 字节", std::mem::size_of::<Vec<i32>>());
+
+    // 内存对齐信息
+    // 对齐决定了类型在内存中的起始地址
+    println!("\n各种类型的对齐要求:");
+    println!("  i32: {} 字节对齐", std::mem::align_of::<i32>());
+    println!("  i64: {} 字节对齐", std::mem::align_of::<i64>());
+    println!("  f64: {} 字节对齐", std::mem::align_of::<f64>());
+
+    // 复杂类型示例
+    #[repr(C)] // C 布局，用于 FFI
+    struct ExampleStruct {
+        a: i8,
+        b: i32,
+        c: i16,
+    }
+
+    #[repr(packed)] // 紧凑布局，无填充
+    struct PackedStruct {
+        a: i8,
+        b: i32,
+        c: i16,
+    }
+
+    println!("\n结构体布局对比:");
+    println!("  C布局结构体: {} 字节", std::mem::size_of::<ExampleStruct>());
+    println!("  紧凑布局结构体: {} 字节", std::mem::size_of::<PackedStruct>());
 }
 
-/// Demonstrates safe memory patterns using smart pointers
+/// 演示使用智能指针的安全内存模式
+///
+/// 这个函数展示了 Rust 中各种智能指针的用途：
+/// - Box<T>: 单所有权堆分配
+/// - Rc<T>: 引用计数，多所有权（单线程）
+/// - Arc<T>: 原子引用计数，多所有权（多线程）
+///
+/// 智能指针的优点：
+/// - 自动内存管理
+/// - 防止内存泄漏
+/// - 类型安全
 fn demonstrate_smart_pointers() {
-    println!("\n=== Smart Pointers and Memory Safety ===");
+    println!("\n=== 智能指针和内存安全 ===");
 
-    // Box<T> - heap allocation with single ownership
+    // Box<T> - 堆分配，单一所有权
+    // 最简单的智能指针，提供堆分配
     let boxed_value = Box::new(42);
-    println!("Boxed value: {}", boxed_value);
+    println!("Box 值: {} (栈上指针大小: {} 字节)",
+             boxed_value, std::mem::size_of_val(&boxed_value));
 
-    // Rc<T> - reference counting for multiple owners
+    // Rc<T> - 引用计数，多个所有者（单线程）
+    // 允许多个变量共享同一数据的所有权
     use std::rc::Rc;
     let rc_value = Rc::new(100);
-    let _rc_clone = Rc::clone(&rc_value);
-    println!("Rc value: {}, strong count: {}", rc_value, Rc::strong_count(&rc_value));
+    let rc_clone1 = Rc::clone(&rc_value);
+    let rc_clone2 = Rc::clone(&rc_value);
+    println!("Rc 值: {} (强引用计数: {})",
+             rc_value, Rc::strong_count(&rc_value));
 
-    // Arc<T> - atomic reference counting for thread-safe sharing
+    // 释放一个克隆，引用计数减少
+    drop(rc_clone1);
+    println!("释放一个克隆后，强引用计数: {}", Rc::strong_count(&rc_value));
+
+    // Arc<T> - 原子引用计数，多线程安全
+    // 类似于 Rc，但可以在多线程间安全共享
     use std::sync::Arc;
     let arc_value = Arc::new(200);
-    let _arc_clone = Arc::clone(&arc_value);
-    println!("Arc value: {}, strong count: {}", arc_value, Arc::strong_count(&arc_value));
+    let arc_clone = Arc::clone(&arc_value);
+    println!("Arc 值: {} (强引用计数: {})",
+             arc_value, Arc::strong_count(&arc_value));
+
+    // 智能指针的内存使用对比
+    println!("\n智能指针内存使用:");
+    println!("  Box<i32>: {} 字节", std::mem::size_of::<Box<i32>>());
+    println!("  Rc<i32>: {} 字节", std::mem::size_of::<Rc<i32>>());
+    println!("  Arc<i32>: {} 字节", std::mem::size_of::<Arc<i32>>());
 }
 
+// 导入高级内存管理示例模块
 mod advanced_memory;
 
+// 主函数：运行所有内存管理演示
 fn main() {
-    println!("🦀 Rust Memory Management Demo");
-    println!("==============================");
+    println!("🦀 Rust 内存管理演示");
+    println!("============================");
 
-    // Run all demonstrations
-    allocate_memory_with_libc();
-    allocate_memory_with_rust();
-    demonstrate_stack_vs_heap();
-    demonstrate_memory_layout();
-    demonstrate_smart_pointers();
+    // 运行所有基础演示
+    allocate_memory_with_libc();      // C 风格内存分配
+    allocate_memory_with_rust();      // Rust 原生内存分配
+    demonstrate_stack_vs_heap();      // 栈与堆分配对比
+    demonstrate_memory_layout();      // 内存布局信息
+    demonstrate_smart_pointers();     // 智能指针演示
 
-    // Run advanced examples
+    // 运行高级示例
     advanced_memory::run_advanced_examples();
 
-    println!("\n✅ All memory management examples completed successfully!");
-    println!("\n📚 Further Reading:");
-    println!("  • Rust Book - Ownership: https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html");
+    println!("\n✅ 所有内存管理示例完成！");
+    println!("\n📚 延伸阅读:");
+    println!("  • Rust Book - 所有权: https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html");
     println!("  • Rustonomicon: https://doc.rust-lang.org/nomicon/");
-    println!("  • std::alloc docs: https://doc.rust-lang.org/std/alloc/index.html");
-    println!("  • Unsafe Rust guidelines: https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html");
-    println!("  • Custom allocators: https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html");
-    println!("  • Smart pointers guide: https://doc.rust-lang.org/book/ch15-00-smart-pointers.html");
+    println!("  • std::alloc 文档: https://doc.rust-lang.org/std/alloc/index.html");
+    println!("  • 不安全 Rust 指南: https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html");
+    println!("  • 自定义分配器: https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html");
+    println!("  • 智能指针指南: https://doc.rust-lang.org/book/ch15-00-smart-pointers.html");
+    println!("  • 内存布局详解: https://doc.rust-lang.org/reference/type-layout.html");
 }
