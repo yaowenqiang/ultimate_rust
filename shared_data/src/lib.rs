@@ -17,7 +17,7 @@ fn unix_now() -> u32 {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum collectorCommandV1 {
     SubmitData {
-        collector_id: u32,
+        collector_id: u128,
         total_memory: u64,
         used_memory: u64,
         average_cpu_usage: f32,
@@ -25,8 +25,7 @@ pub enum collectorCommandV1 {
 }
 
 pub fn encode_v1(command: collectorCommandV1) -> Vec<u8> {
-    let json = serde_json::to_string(&command)
-        .expect("JSON 序列化失败");
+    let json = serde_json::to_string(&command).expect("JSON 序列化失败");
     let json_bytes = json.as_bytes();
 
     let crc = crc32fast::hash(json_bytes);
@@ -71,8 +70,7 @@ pub fn decode_v1(bytes: &[u8]) -> (u32, collectorCommandV1) {
     let computed_crc = crc32fast::hash(payload);
     assert_eq!(crc, computed_crc, "CRC32 校验失败，数据可能已损坏");
 
-    let command = serde_json::from_slice(payload)
-        .expect("JSON 反序列化失败");
+    let command = serde_json::from_slice(payload).expect("JSON 反序列化失败");
 
     (timestamp, command)
 }
@@ -119,6 +117,7 @@ mod tests {
 
         std::panic::catch_unwind(|| {
             decode_v1(&corrupted);
-        }).expect_err("应该检测到数据损坏");
+        })
+        .expect_err("应该检测到数据损坏");
     }
 }

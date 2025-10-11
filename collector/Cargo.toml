@@ -7,3 +7,4 @@ edition = "2024"
 
 shared_data = { path = "../shared_data" }
 sysinfo = { version = "0.37.2", features = ["apple-app-store"] }
+uuid = { version = "1.18.1", features = ["fast-rng", "v4"] }

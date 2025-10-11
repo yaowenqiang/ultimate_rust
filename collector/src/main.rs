@@ -2,8 +2,21 @@ use shared_data::{DATA_COLLECTOR_ADDRESS, collectorCommandV1};
 use std::io::Write;
 use std::sync::mpsc::Sender;
 use std::time::Instant;
+use uuid::Uuid;
 
-pub fn collect_data(tx: Sender<collectorCommandV1>) {
+fn get_uuid() -> u128 {
+    let path = std::path::Path::new("uuid");
+    if path.exists() {
+        let contents = std::fs::read_to_string(path).unwrap();
+        contents.parse::<u128>().unwrap()
+    } else {
+        let uuid = Uuid::new_v4().as_u128();
+        std::fs::write(path, uuid.to_string()).unwrap();
+        uuid
+    }
+}
+
+pub fn collect_data(tx: Sender<collectorCommandV1>, collector_id: u128) {
     let mut sys = sysinfo::System::new_all();
     sys.refresh_memory();
     sys.refresh_cpu_all();
@@ -22,7 +35,7 @@ pub fn collect_data(tx: Sender<collectorCommandV1>) {
         let average_cpu_usage = total_cpu_usage / num_cpus as f32;
 
         let send_result = tx.send(collectorCommandV1::SubmitData {
-            collector_id: 0,
+            collector_id,
             total_memory,
             used_memory,
             average_cpu_usage,
@@ -48,9 +61,10 @@ pub fn send_command(command: collectorCommandV1) {
     stream.write_all(&bytes).unwrap();
 }
 fn main() {
+    let uuid = get_uuid();
     let (tx, rx) = std::sync::mpsc::channel::<collectorCommandV1>();
     let _collector_thread = std::thread::spawn(move || {
-        collect_data(tx);
+        collect_data(tx, uuid);
     });
 
     while let Ok(command) = rx.recv() {
