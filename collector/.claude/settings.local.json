@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(cargo run:*)",
-      "Read(//Users/yaojack/Code/rust_project/ultimate_rust/shared_data/**)"
+      "Read(//Users/yaojack/Code/rust_project/ultimate_rust/shared_data/**)",
+      "Read(//Users/yaojack/Code/rust_project/ultimate_rust/server/**)"
     ],
     "deny": [],
     "ask": []

@@ -1,10 +1,59 @@
+# 共享数据协议库 (Shared Data) - 分布式系统通信协议
+#
+# 这是一个 Rust 实现的自定义二进制协议库，用于分布式监控系统中
+# 收集器和服务器之间的数据通信。作为 ultimate_rust 学习工作空间的一部分，
+# 展示了以下重要的 Rust 编程概念：
+#
+# - 序列化和反序列化技术
+# - 自定义二进制协议设计
+# - 数据完整性校验和错误处理
+# - 字节序和网络编程基础
+# - 测试驱动开发 (TDD)
+#
+# 协议特点：
+# 1. 高效的二进制格式（相比 JSON 更节省带宽）
+# 2. 内置的数据完整性校验 (CRC32)
+# 3. 版本化协议支持向前兼容
+# 4. 网络字节序确保跨平台兼容性
+# 5. 全面的单元测试覆盖
+#
+# 运行方式：
+# ```bash
+# # 运行演示程序
+# cargo run
+#
+# # 运行测试
+# cargo test
+# ```
+
 [package]
 name = "shared_data"
 version = "0.1.0"
 edition = "2024"
 
+# 依赖项配置
+# 每个依赖都展示了序列化和数据处理的不同方面
+
 [dependencies]
+
+# Bincode - 高效的二进制序列化库
+# features = ["i128"] 支持 128 位整数类型
+# 相比 JSON 序列化，bincode 更紧凑且更快速
+# 文档：https://docs.rs/bincode/latest/bincode/
 bincode = { version = "1.3.3", features = ["i128"] }
+
+# CRC32 Fast - 快速的 CRC32 校验和计算
+# 用于检测数据传输过程中的损坏
+# 优化的实现，比标准库更快
+# 文档：https://docs.rs/crc32fast/latest/crc32fast/
 crc32fast = "1.5.0"
+
+# Serde - Rust 事实上的序列化标准
+# features = ["derive"] 支持派生序列化宏
+# 提供编译时安全的序列化和反序列化
+# 文档：https://serde.rs/
 serde = { version = "1.0.228", features = ["derive"] }
-#serde_json = "1.0.145"
+
+# JSON 序列化库（当前版本使用 bincode）
+# 保留作为参考，可用于调试和兼容性
+# serde_json = "1.0.145"

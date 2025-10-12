@@ -1,10 +1,43 @@
+# 数据收集器 (Collector) - 分布式系统监控组件
+#
+# 这是一个 Rust 实现的系统性能数据收集器，用于构建分布式监控系统。
+# 作为 ultimate_rust 学习工作空间的一部分，展示了以下 Rust 概念：
+# - 多线程编程和线程间通信
+# - 系统性能监控
+# - 网络编程和数据传输
+# - 序列化和协议设计
+#
+# 项目功能：
+# 1. 收集本地系统 CPU 和内存使用情况
+# 2. 通过 TCP 连接将数据发送到中央服务器
+# 3. 使用持久化 UUID 标识收集器实例
+# 4. 实现生产者-消费者模式的并发架构
+#
+# 运行方式：
+# ```bash
+# cargo run --release
+# ```
+
 [package]
 name = "collector"
 version = "0.1.0"
 edition = "2024"
 
+# 依赖项配置
+# 每个依赖都展示了 Rust 生态系统中不同类型的库使用方式
+
 [dependencies]
 
+# 本地共享库 - 定义了数据结构和网络协议
+# path 指向工作空间内的相对路径
 shared_data = { path = "../shared_data" }
+
+# 系统信息库 - 跨平台的系统监控库
+# 用于获取 CPU、内存、磁盘等系统资源使用情况
+# apple-app-store 功能为 macOS App Store 分发优化
 sysinfo = { version = "0.37.2", features = ["apple-app-store"] }
+
+# UUID 生成库 - 用于生成唯一标识符
+# fast-rng: 使用更快的随机数生成器
+# v4: 支持 UUID v4 (随机生成) 标准
 uuid = { version = "1.18.1", features = ["fast-rng", "v4"] }

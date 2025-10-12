@@ -1,15 +1,75 @@
+# 数据收集服务器 (Server) - 分布式监控系统服务端
+#
+# 这是一个 Rust 实现的高性能数据收集服务器，用于构建分布式监控系统。
+# 作为 ultimate_rust 学习工作空间的一部分，展示了以下 Rust 高级概念：
+# - 异步编程和并发处理
+# - Web 服务器开发和 REST API 设计
+# - 数据库操作和数据持久化
+# - 网络编程和协议处理
+#
+# 项目功能：
+# 1. 接收来自多个收集器的系统性能数据
+# 2. 将数据存储到 SQLite 数据库
+# 3. 提供 REST API 查询历史数据
+# 4. 支持多收集器并发连接
+# 5. 实时数据处理和存储
+#
+# 运行方式：
+# ```bash
+# cargo run --release
+# ```
+#
+# API 端点：
+# - GET /api/all - 获取所有数据点
+# - GET /api/collectors - 获取收集器列表
+# - GET /api/collector/{uuid} - 获取特定收集器的数据
+
 [package]
 name = "server"
 version = "0.1.0"
 edition = "2024"
 
+# 依赖项配置
+# 展示了现代 Rust 异步 Web 开发的完整技术栈
+
 [dependencies]
+
+# 本地共享库 - 定义了数据结构和网络协议
+# 包含数据收集命令和编解码函数
 shared_data = { path = "../shared_data" }
+
+# 错误处理库 - 提供简洁的错误类型和处理机制
+# anyhow::Result 用于统一的错误处理，简化错误传播
 anyhow = "1.0.100"
+
+# SQLx - 现代异步 SQL 工具包
+# features:
+# - runtime-tokio-native-tls: 使用 Tokio 异步运行时
+# - sqlite: 支持 SQLite 数据库
 sqlx = { version = "0.8.6", features = ["runtime-tokio-native-tls", "sqlite"] }
+
+# Tokio - Rust 异步编程运行时
+# features = ["full"] 包含所有功能：网络、文件系统、时间等
 tokio = { version = "1.47.1", features = ["full"] }
+
+# UUID 处理库 - 用于生成和解析 UUID
+# 在数据库中作为收集器的唯一标识符
 uuid = "1.18.1"
+
+# 环境变量加载库 - 从 .env 文件加载配置
+# 用于管理数据库连接字符串等敏感配置
 dotenv = "0.15.0"
+
+# Axum - 基于 Tokio 的现代 Web 框架
+# 类型安全、高性能的异步 Web 服务器
+# 文档：https://docs.rs/axum/
 axum = "0.8.6"
+
+# Futures - 异步编程工具库
+# 提供异步流处理和其他异步原语
 futures = "0.3.31"
+
+# Serde - 序列化和反序列化框架
+# features = ["derive"] 支持派生序列化宏
+# 用于 JSON 数据处理和 API 响应
 serde = { version = "1.0.228", features = ["derive"] }
