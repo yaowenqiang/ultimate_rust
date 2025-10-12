@@ -3902,9 +3902,9 @@ dependencies = [
 name = "shared_data"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "crc32fast",
  "serde",
- "serde_json",
 ]
 
 [[package]]

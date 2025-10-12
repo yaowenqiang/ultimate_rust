@@ -25,11 +25,16 @@ pub enum CollectorCommandV1 {
 }
 
 pub fn encode_v1(command: CollectorCommandV1) -> Vec<u8> {
-    let json = serde_json::to_string(&command).expect("JSON 序列化失败");
-    let json_bytes = json.as_bytes();
+    // let json = serde_json::to_string(&command).expect("JSON 序列化失败");
+    // let json_bytes = json.as_bytes();
 
-    let crc = crc32fast::hash(json_bytes);
-    let payload_size = json_bytes.len() as u32;
+    let payload_bytes = bincode::serialize(&command).unwrap();
+
+    // let crc = crc32fast::hash(json_bytes);
+    // let payload_size = json_bytes.len() as u32;
+
+    let crc = crc32fast::hash(&payload_bytes);
+    let payload_size = payload_bytes.len() as u32;
 
     let timestamp = unix_now();
 
@@ -39,7 +44,7 @@ pub fn encode_v1(command: CollectorCommandV1) -> Vec<u8> {
     result.extend_from_slice(&VERSION_NUMBER.to_be_bytes());
     result.extend_from_slice(&timestamp.to_be_bytes());
     result.extend_from_slice(&payload_size.to_be_bytes());
-    result.extend_from_slice(json_bytes);
+    result.extend_from_slice(&payload_bytes);
     result.extend_from_slice(&crc.to_be_bytes());
 
     result
@@ -69,7 +74,8 @@ pub fn decode_v1(bytes: &[u8]) -> (u32, CollectorCommandV1) {
     let computed_crc = crc32fast::hash(payload);
     assert_eq!(crc, computed_crc, "CRC32 校验失败，数据可能已损坏");
 
-    let command = serde_json::from_slice(payload).expect("JSON 反序列化失败");
+    // let command = serde_json::from_slice(payload).expect("JSON 反序列化失败");
+    let command = bincode::deserialize(payload).expect("JSON 反序列化失败");
 
     (timestamp, command)
 }
