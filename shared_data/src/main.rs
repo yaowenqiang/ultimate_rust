@@ -77,7 +77,7 @@ fn unix_now() -> u32 {
 /// - used_memory: 已使用内存（字节）
 /// - average_cpu_usage: 平均 CPU 使用率（0.0-1.0）
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub enum collectorCommandV1 {
+pub enum CollectorCommandV1 {
     /// 提交系统监控数据
     SubmitData {
         collector_id: u32,         // 数据收集器 ID
@@ -108,7 +108,7 @@ pub enum collectorCommandV1 {
 /// - Payload Size: JSON 数据长度 (大端序)
 /// - JSON Data: JSON 序列化的命令数据
 /// - CRC32: JSON 数据的 CRC32 校验和 (大端序)
-pub fn encode_v1(command: collectorCommandV1) -> Vec<u8> {
+pub fn encode_v1(command: CollectorCommandV1) -> Vec<u8> {
     // 将命令序列化为 JSON 字符串
     let json = serde_json::to_string(&command)
         .expect("JSON 序列化失败");
@@ -144,14 +144,14 @@ pub fn encode_v1(command: collectorCommandV1) -> Vec<u8> {
 /// `bytes` - 要解码的二进制数据
 ///
 /// # 返回值
-/// `(u32, collectorCommandV1)` - (时间戳, 解码后的命令)
+/// `(u32, CollectorCommandV1)` - (时间戳, 解码后的命令)
 ///
 /// # Panics
 /// - 如果魔数不匹配
 /// - 如果版本号不匹配
 /// - 如果 CRC32 校验失败
 /// - 如果 JSON 反序列化失败
-pub fn decode_v1(bytes: &[u8]) -> (u32, collectorCommandV1) {
+pub fn decode_v1(bytes: &[u8]) -> (u32, CollectorCommandV1) {
     // 解析协议头部（大端序）
     let magic_number = u16::from_be_bytes([bytes[0], bytes[1]]);
     let version_number = u16::from_be_bytes([bytes[2], bytes[3]]);
@@ -165,7 +165,6 @@ pub fn decode_v1(bytes: &[u8]) -> (u32, collectorCommandV1) {
 
     // 提取 CRC32 校验和
     let crc_start = payload_end;
-    let crc_end = crc_start + 4;
     let crc = u32::from_be_bytes([
         bytes[crc_start],
         bytes[crc_start + 1],
@@ -203,7 +202,7 @@ mod tests {
     #[test]
     fn test_encode_decode() {
         // 创建测试命令
-        let command = collectorCommandV1::SubmitData {
+        let command = CollectorCommandV1::SubmitData {
             collector_id: 1234,
             total_memory: 100,
             used_memory: 50,
@@ -229,7 +228,7 @@ mod tests {
     /// 测试协议的完整性校验
     #[test]
     fn test_protocol_integrity() {
-        let command = collectorCommandV1::SubmitData {
+        let command = CollectorCommandV1::SubmitData {
             collector_id: 5678,
             total_memory: 1024,
             used_memory: 512,
@@ -261,7 +260,7 @@ fn main() {
     println!("============================");
 
     // 创建示例命令
-    let sample_command = collectorCommandV1::SubmitData {
+    let sample_command = CollectorCommandV1::SubmitData {
         collector_id: 1001,
         total_memory: 8589934592,    // 8 GB
         used_memory: 4294967296,     // 4 GB

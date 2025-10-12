@@ -15,7 +15,7 @@ fn unix_now() -> u32 {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub enum collectorCommandV1 {
+pub enum CollectorCommandV1 {
     SubmitData {
         collector_id: u128,
         total_memory: u64,
@@ -24,7 +24,7 @@ pub enum collectorCommandV1 {
     },
 }
 
-pub fn encode_v1(command: collectorCommandV1) -> Vec<u8> {
+pub fn encode_v1(command: CollectorCommandV1) -> Vec<u8> {
     let json = serde_json::to_string(&command).expect("JSON 序列化失败");
     let json_bytes = json.as_bytes();
 
@@ -45,7 +45,7 @@ pub fn encode_v1(command: collectorCommandV1) -> Vec<u8> {
     result
 }
 
-pub fn decode_v1(bytes: &[u8]) -> (u32, collectorCommandV1) {
+pub fn decode_v1(bytes: &[u8]) -> (u32, CollectorCommandV1) {
     let magic_number = u16::from_be_bytes([bytes[0], bytes[1]]);
     let version_number = u16::from_be_bytes([bytes[2], bytes[3]]);
     let timestamp = u32::from_be_bytes([bytes[4], bytes[5], bytes[6], bytes[7]]);
@@ -56,7 +56,6 @@ pub fn decode_v1(bytes: &[u8]) -> (u32, collectorCommandV1) {
     let payload = &bytes[payload_start..payload_end];
 
     let crc_start = payload_end;
-    let crc_end = crc_start + 4;
     let crc = u32::from_be_bytes([
         bytes[crc_start],
         bytes[crc_start + 1],
@@ -81,7 +80,7 @@ mod tests {
 
     #[test]
     fn test_encode_decode() {
-        let command = collectorCommandV1::SubmitData {
+        let command = CollectorCommandV1::SubmitData {
             collector_id: 1234,
             total_memory: 100,
             used_memory: 50,
@@ -98,7 +97,7 @@ mod tests {
 
     #[test]
     fn test_protocol_integrity() {
-        let command = collectorCommandV1::SubmitData {
+        let command = CollectorCommandV1::SubmitData {
             collector_id: 5678,
             total_memory: 1024,
             used_memory: 512,

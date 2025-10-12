@@ -1,4 +1,4 @@
-use shared_data::{DATA_COLLECTOR_ADDRESS, collectorCommandV1};
+use shared_data::{DATA_COLLECTOR_ADDRESS, CollectorCommandV1};
 use std::io::Write;
 use std::sync::mpsc::Sender;
 use std::time::Instant;
@@ -16,7 +16,7 @@ fn get_uuid() -> u128 {
     }
 }
 
-pub fn collect_data(tx: Sender<collectorCommandV1>, collector_id: u128) {
+pub fn collect_data(tx: Sender<CollectorCommandV1>, collector_id: u128) {
     let mut sys = sysinfo::System::new_all();
     sys.refresh_memory();
     sys.refresh_cpu_all();
@@ -34,7 +34,7 @@ pub fn collect_data(tx: Sender<collectorCommandV1>, collector_id: u128) {
         let total_cpu_usage = sys.cpus().iter().map(|x| x.cpu_usage()).sum::<f32>();
         let average_cpu_usage = total_cpu_usage / num_cpus as f32;
 
-        let send_result = tx.send(collectorCommandV1::SubmitData {
+        let send_result = tx.send(CollectorCommandV1::SubmitData {
             collector_id,
             total_memory,
             used_memory,
@@ -53,7 +53,7 @@ pub fn collect_data(tx: Sender<collectorCommandV1>, collector_id: u128) {
     }
 }
 
-pub fn send_command(command: collectorCommandV1) {
+pub fn send_command(command: CollectorCommandV1) {
     let bytes = shared_data::encode_v1(command);
     println!("Encoded {} bytes", bytes.len());
 
@@ -62,7 +62,7 @@ pub fn send_command(command: collectorCommandV1) {
 }
 fn main() {
     let uuid = get_uuid();
-    let (tx, rx) = std::sync::mpsc::channel::<collectorCommandV1>();
+    let (tx, rx) = std::sync::mpsc::channel::<CollectorCommandV1>();
     let _collector_thread = std::thread::spawn(move || {
         collect_data(tx, uuid);
     });
