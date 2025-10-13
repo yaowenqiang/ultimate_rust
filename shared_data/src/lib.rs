@@ -22,8 +22,8 @@
 // - CRC32 算法：https://en.wikipedia.org/wiki/Cyclic_redundancy_check
 // - 网络字节序：https://en.wikipedia.org/wiki/Endianness
 
-use serde::{Deserialize, Serialize};  // 序列化和反序列化支持
-use std::time::{SystemTime, UNIX_EPOCH};  // 时间处理，用于生成时间戳
+use serde::{Deserialize, Serialize}; // 序列化和反序列化支持
+use std::time::{SystemTime, UNIX_EPOCH}; // 时间处理，用于生成时间戳
 
 /// 数据收集器网络地址常量
 ///
@@ -194,6 +194,19 @@ pub enum CollectorCommandV1 {
     },
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum CollectorResponseV1 {
+    Ack(u32),
+}
+
+pub fn encode_response_v1(command: CollectorResponseV1) -> Vec<u8> {
+    bincode::serialize(&command).unwrap()
+}
+
+pub fn decode_response_v1(bytes: &[u8]) -> CollectorResponseV1 {
+    bincode::deserialize(bytes).unwrap()
+}
+
 /// 将命令编码为二进制格式（版本 1）
 ///
 /// 这个函数实现了自定义的二进制协议编码，将结构化的命令数据转换为
@@ -241,7 +254,7 @@ pub enum CollectorCommandV1 {
 ///     used_memory: 4294967296,
 ///     average_cpu_usage: 0.65,
 /// };
-/// let encoded = encode_v1(command);
+/// let encoded = encode_v1(&command);
 /// println!("编码后长度: {} 字节", encoded.len());
 /// ```
 ///
@@ -274,12 +287,12 @@ pub fn encode_v1(command: CollectorCommandV1) -> Vec<u8> {
     let mut result = Vec::with_capacity(140);
 
     // 按照协议格式写入各个字段（全部使用大端序）
-    result.extend_from_slice(&MAGIC_NUMBER.to_be_bytes());      // 魔数 (2 字节)
-    result.extend_from_slice(&VERSION_NUMBER.to_be_bytes());    // 版本号 (2 字节)
-    result.extend_from_slice(&timestamp.to_be_bytes());         // 时间戳 (4 字节)
-    result.extend_from_slice(&payload_size.to_be_bytes());      // 载荷大小 (4 字节)
-    result.extend_from_slice(&payload_bytes);                   // Bincode 数据 (变长)
-    result.extend_from_slice(&crc.to_be_bytes());               // CRC32 校验和 (4 字节)
+    result.extend_from_slice(&MAGIC_NUMBER.to_be_bytes()); // 魔数 (2 字节)
+    result.extend_from_slice(&VERSION_NUMBER.to_be_bytes()); // 版本号 (2 字节)
+    result.extend_from_slice(&timestamp.to_be_bytes()); // 时间戳 (4 字节)
+    result.extend_from_slice(&payload_size.to_be_bytes()); // 载荷大小 (4 字节)
+    result.extend_from_slice(&payload_bytes); // Bincode 数据 (变长)
+    result.extend_from_slice(&crc.to_be_bytes()); // CRC32 校验和 (4 字节)
 
     result
 }
@@ -363,7 +376,7 @@ pub fn decode_v1(bytes: &[u8]) -> (u32, CollectorCommandV1) {
 
     // ===== 载荷数据提取 =====
     // 根据载荷大小字段提取实际的命令数据
-    let payload_start = 12;  // 头部固定 12 字节
+    let payload_start = 12; // 头部固定 12 字节
     let payload_end = payload_start + payload_size as usize;
     let payload = &bytes[payload_start..payload_end];
 
@@ -371,10 +384,10 @@ pub fn decode_v1(bytes: &[u8]) -> (u32, CollectorCommandV1) {
     // CRC32 位于载荷数据之后，固定 4 字节
     let crc_start = payload_end;
     let crc = u32::from_be_bytes([
-        bytes[crc_start],           // CRC32 字节 0
-        bytes[crc_start + 1],       // CRC32 字节 1
-        bytes[crc_start + 2],       // CRC32 字节 2
-        bytes[crc_start + 3],       // CRC32 字节 3
+        bytes[crc_start],     // CRC32 字节 0
+        bytes[crc_start + 1], // CRC32 字节 1
+        bytes[crc_start + 2], // CRC32 字节 2
+        bytes[crc_start + 3], // CRC32 字节 3
     ]);
 
     // ===== 协议验证 =====
@@ -487,14 +500,14 @@ mod tests {
     fn test_protocol_integrity() {
         // ===== 创建测试数据 =====
         let command = CollectorCommandV1::SubmitData {
-            collector_id: 5678,           // 不同的 collector_id
-            total_memory: 1024,           // 更大的内存数值
-            used_memory: 512,             // 50% 使用率
-            average_cpu_usage: 0.75,      // 75% CPU 使用率
+            collector_id: 5678,      // 不同的 collector_id
+            total_memory: 1024,      // 更大的内存数值
+            used_memory: 512,        // 50% 使用率
+            average_cpu_usage: 0.75, // 75% CPU 使用率
         };
 
         // ===== 编码数据 =====
-        let encoded = encode_v1(command);
+        let encoded = encode_v1(command.clone());
 
         // ===== 验证正常解码 =====
         // 确保未损坏的数据能正确解码
@@ -531,7 +544,7 @@ mod tests {
             average_cpu_usage: 0.5,
         };
 
-        let mut encoded = encode_v1(command);
+        let mut encoded = encode_v1(command.clone());
 
         // 修改魔数字段（前两个字节）
         encoded[0] = 0xFF;
@@ -556,7 +569,7 @@ mod tests {
             average_cpu_usage: 0.5,
         };
 
-        let mut encoded = encode_v1(command);
+        let mut encoded = encode_v1(command.clone());
 
         // 修改版本号字段（字节 2-3）
         encoded[2] = 0xFF;
@@ -600,5 +613,13 @@ mod tests {
         let encoded = encode_v1(max_command.clone());
         let (_, decoded) = decode_v1(&encoded);
         assert_eq!(decoded, max_command);
+    }
+
+    #[test]
+    fn test_encode_decode_response() {
+        let response = CollectorResponseV1::Ack(123);
+        let encoded = encode_response_v1(response.clone());
+        let decoded = decode_response_v1(&encoded);
+        assert_eq!(decoded, response);
     }
 }

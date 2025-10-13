@@ -17,12 +17,15 @@
 // - TCP 协议：https://tools.ietf.org/html/rfc793
 // - 异步 Rust：https://rust-lang.github.io/async-book/
 
-use shared_data::{DATA_COLLECTOR_ADDRESS, CollectorCommandV1, decode_v1};
-use sqlx::{Pool, Sqlite};           // 数据库连接池和 SQLite 类型
-use std::net::SocketAddr;           // 网络地址类型
+use shared_data::{
+    CollectorCommandV1, CollectorResponseV1, DATA_COLLECTOR_ADDRESS, decode_v1, encode_response_v1,
+};
+use sqlx::{Pool, Sqlite}; // 数据库连接池和 SQLite 类型
+use std::net::SocketAddr; // 网络地址类型
+use tokio::io::AsyncWriteExt;
 use tokio::{
-    io::AsyncReadExt,               // 异步读取特征
-    net::{TcpListener, TcpStream},  // TCP 监听器和流
+    io::AsyncReadExt,              // 异步读取特征
+    net::{TcpListener, TcpStream}, // TCP 监听器和流
 };
 
 /// 数据收集器主函数 - 启动 TCP 服务器接收收集器数据
@@ -131,7 +134,7 @@ async fn new_collection(mut socket: TcpStream, address: SocketAddr, conn: Pool<S
         // 2. 检查连接状态
         if n == 0 {
             println!("No data received - connection closed!");
-            return;  // 连接已关闭，退出处理函数
+            return; // 连接已关闭，退出处理函数
         }
 
         // 3. 记录接收到的数据量
@@ -144,12 +147,13 @@ async fn new_collection(mut socket: TcpStream, address: SocketAddr, conn: Pool<S
         // 5. 处理解码后的数据
         match received_data {
             (
-                timestamp,                                   // 数据时间戳
-                CollectorCommandV1::SubmitData {            // 数据提交命令
-                    collector_id,                          // 收集器 ID (u128)
-                    total_memory,                          // 总内存 (u64)
-                    used_memory,                           // 已用内存 (u64)
-                    average_cpu_usage,                     // 平均 CPU 使用率 (f32)
+                timestamp, // 数据时间戳
+                CollectorCommandV1::SubmitData {
+                    // 数据提交命令
+                    collector_id,      // 收集器 ID (u128)
+                    total_memory,      // 总内存 (u64)
+                    used_memory,       // 已用内存 (u64)
+                    average_cpu_usage, // 平均 CPU 使用率 (f32)
                 },
             ) => {
                 // 6. 转换 UUID 格式：u128 -> UUID -> String
@@ -166,12 +170,16 @@ async fn new_collection(mut socket: TcpStream, address: SocketAddr, conn: Pool<S
                     .bind(used_memory as i64)            // 类型转换：u64 -> i64
                     .bind(average_cpu_usage)             // 绑定 CPU 使用率
                     .execute(&conn)                      // 执行查询
-                    .await;                              // 异步等待结果
+                    .await; // 异步等待结果
 
                 // 8. 处理数据库操作错误
                 if result.is_err() {
                     println!("Error insert into the database {result:?}");
                     // 注意：这里不 return，继续处理后续数据包
+                } else {
+                    let ack = CollectorResponseV1::Ack(0);
+                    let response_bytes = encode_response_v1(ack);
+                    socket.write_all(&response_bytes).await.unwrap();
                 }
             }
         }
