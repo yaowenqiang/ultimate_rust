@@ -11,10 +11,14 @@
 // - Rust 网络编程：https://doc.rust-lang.org/std/net/
 // - UUID 生成：https://docs.rs/uuid/latest/uuid/
 
-use shared_data::{DATA_COLLECTOR_ADDRESS, CollectorCommandV1};
-use std::io::Write;
-use std::sync::mpsc::Sender;  // 多生产者单消费者通道的发送端
+use shared_data::{
+    CollectorCommandV1, CollectorResponseV1, DATA_COLLECTOR_ADDRESS, decode_response_v1,
+};
+use std::collections::VecDeque;
+use std::io::{Read, Write};
+use std::sync::mpsc::Sender; // 多生产者单消费者通道的发送端
 use std::time::Instant;
+use thiserror::Error;
 use uuid::Uuid;
 
 /// 获取或生成收集器的唯一标识符
@@ -48,6 +52,16 @@ fn get_uuid() -> u128 {
         std::fs::write(path, uuid.to_string()).unwrap();
         uuid
     }
+}
+
+#[derive(Debug, Error)]
+pub enum CollectorError {
+    #[error("Unable to connect to the server")]
+    UnableToConnect,
+    #[error("Sending the data failed")]
+    UnableToSend,
+    #[error("Receive data failed")]
+    UnableToReceive,
 }
 
 /// 系统性能数据收集函数
@@ -90,23 +104,24 @@ pub fn collect_data(tx: Sender<CollectorCommandV1>, collector_id: u128) {
 
     // 主循环：持续收集和发送数据
     loop {
-        let now = Instant::now();  // 记录开始时间，用于控制采样间隔
+        let now = Instant::now(); // 记录开始时间，用于控制采样间隔
 
         // 刷新系统信息，获取最新的性能数据
         sys.refresh_memory();
         sys.refresh_cpu_all();
 
         // 收集内存使用情况
-        let total_memory = sys.total_memory();    // 总内存量（字节）
-        let used_memory = sys.used_memory();      // 已使用内存量（字节）
+        let total_memory = sys.total_memory(); // 总内存量（字节）
+        let used_memory = sys.used_memory(); // 已使用内存量（字节）
 
         // 收集 CPU 使用情况
-        let num_cpus = sys.cpus().len();  // CPU 核心数量
-        let total_cpu_usage = sys.cpus()
+        let num_cpus = sys.cpus().len(); // CPU 核心数量
+        let total_cpu_usage = sys
+            .cpus()
             .iter()
-            .map(|x| x.cpu_usage())  // 获取每个核心的使用率
-            .sum::<f32>();           // 计算所有核心的总使用率
-        let average_cpu_usage = total_cpu_usage / num_cpus as f32;  // 平均使用率
+            .map(|x| x.cpu_usage()) // 获取每个核心的使用率
+            .sum::<f32>(); // 计算所有核心的总使用率
+        let average_cpu_usage = total_cpu_usage / num_cpus as f32; // 平均使用率
 
         // 通过通道发送数据到主线程
         let send_result = tx.send(CollectorCommandV1::SubmitData {
@@ -173,6 +188,37 @@ pub fn send_command(command: CollectorCommandV1) {
     // write_all 确保所有数据都被发送
     stream.write_all(&bytes).unwrap();
 }
+
+pub fn send_queue(queue: &mut VecDeque<Vec<u8>>) -> Result<(), CollectorError> {
+    let mut stream = std::net::TcpStream::connect(DATA_COLLECTOR_ADDRESS)
+        .map_err(|_| CollectorError::UnableToConnect)?;
+
+    let mut buf: Vec<u8> = vec![0u8; 512];
+    while let Some(command) = queue.pop_front() {
+        if stream.write_all(&command).is_err() {
+            queue.push_front(command);
+            return Err(CollectorError::UnableToSend);
+        }
+
+        let bytes_read = stream
+            .read(&mut buf)
+            .map_err(|_| CollectorError::UnableToReceive)?;
+        if bytes_read == 0 {
+            queue.push_front(command);
+            return Err(CollectorError::UnableToReceive);
+        }
+
+        let ack = decode_response_v1(&buf[0..bytes_read]);
+        if ack != CollectorResponseV1::Ack(0) {
+            queue.push_front(command);
+            return Err(CollectorError::UnableToReceive);
+        } else {
+            println!("Ack received!");
+        }
+    }
+
+    Ok(())
+}
 /// 主函数 - 数据收集器的入口点
 ///
 /// 这个函数实现了生产者-消费者模式：
@@ -214,13 +260,13 @@ fn main() {
     // move 关键字将 uuid 和 tx 的所有权转移给新线程
     // _collector_thread 变量防止线程被立即分离
     let _collector_thread = std::thread::spawn(move || {
-        collect_data(tx, uuid);  // 在独立线程中持续收集数据
+        collect_data(tx, uuid); // 在独立线程中持续收集数据
     });
 
     // 4. 主线程：从通道接收数据并发送到网络
     // 这是一个阻塞循环，持续等待来自数据收集线程的数据
     while let Ok(command) = rx.recv() {
-        send_command(command);  // 将数据发送到中央服务器
+        send_command(command); // 将数据发送到中央服务器
     }
 
     // 注意：当前程序没有优雅的退出机制
