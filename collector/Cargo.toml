@@ -42,3 +42,11 @@ thiserror = "2.0.17"
 # fast-rng: 使用更快的随机数生成器
 # v4: 支持 UUID v4 (随机生成) 标准
 uuid = { version = "1.18.1", features = ["fast-rng", "v4"] }
+
+[profile.release]
+#opt-level = "s"
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
+panic = "immedate-abort"
