@@ -17,7 +17,7 @@
 # ```bash
 # cargo run --release
 # ```
-
+#cargo-features = ["panic-immediate-abort"]
 [package]
 name = "collector"
 version = "0.1.0"
@@ -38,10 +38,12 @@ shared_data = { path = "../shared_data" }
 sysinfo = { version = "0.37.2", features = ["apple-app-store"] }
 thiserror = "2.0.17"
 
+
 # UUID 生成库 - 用于生成唯一标识符
 # fast-rng: 使用更快的随机数生成器
 # v4: 支持 UUID v4 (随机生成) 标准
 uuid = { version = "1.18.1", features = ["fast-rng", "v4"] }
+
 
 [profile.release]
 #opt-level = "s"
@@ -49,4 +51,4 @@ opt-level = "z"
 strip = true
 lto = true
 codegen-units = 1
-panic = "immedate-abort"
+panic = "abort"

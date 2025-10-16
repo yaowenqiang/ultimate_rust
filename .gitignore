@@ -7,3 +7,4 @@ tokio_db/tokio_db.db-wal
 *.png
 *.bin
 collector/uuid
+warandpeace.txt

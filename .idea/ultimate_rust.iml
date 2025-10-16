@@ -54,10 +54,13 @@
       <sourceFolder url="file://$MODULE_DIR$/tokio_web_service/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/traits/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/unsafe_demo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/buffer_read/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/bytes/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/collector/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cycles/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/file_read/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/iterators/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/memmap_read/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/memory_fragmentation/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/packing/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/server/src" isTestSource="false" />
