@@ -2,6 +2,14 @@
 name = "file_adapt"
 version = "0.1.0"
 edition = "2024"
+authors = ["Claude <noreply@anthropic.com>"]
+description = "一个使用 axum 框架构建的异步流式文件服务器，演示 Rust 异步编程和 Web 开发最佳实践"
+readme = "README.md"
+license = "MIT"
+keywords = ["axum", "tokio", "async", "web", "streaming"]
+categories = ["web-programming", "asynchronous", "file-io"]
+repository = "https://github.com/rust-lang/ultimate_rust"
+homepage = "https://github.com/rust-lang/ultimate_rust/tree/main/file_adapt"
 
 [dependencies]
 axum = "0.8.6"
