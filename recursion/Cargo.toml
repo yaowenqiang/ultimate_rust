@@ -1,9 +1,68 @@
+# Rust 异步递归示例项目
+#
+# 本项目演示 Rust 中异步递归函数的实现方法，以及相关的高级异步编程概念。
+# 包括斐波那契数列的异步递归实现、Future 类型的装箱和固定等高级主题。
+#
+# 学习目标：
+# - 掌握 async-recursion 库的使用
+# - 理解 Pin<Box<dyn Future>> 的概念和应用
+# - 学习 Tokio 异步运行时的基本操作
+# - 了解异步函数的动态分发机制
+
 [package]
 name = "recursion"
 version = "0.1.0"
 edition = "2024"
+authors = ["Claude Code <noreply@anthropic.com>"]
+description = "Rust 异步递归编程示例项目"
+license = "MIT"
+repository = "https://github.com/anthropics/claude-code"
+keywords = ["async", "recursion", "tokio", "future", "rust"]
+categories = ["asynchronous", "algorithms", "education"]
 
 [dependencies]
+# 异步递归宏库 - 允许在异步函数中使用递归
+# GitHub: https://github.com/dcampbell99/async-recursion
+# 文档: https://docs.rs/async-recursion/latest/async_recursion/
 async-recursion = "1.1.1"
+
+# Future 和 Stream 的工具库
+# 提供 Future trait 的基础实现和工具函数
+# 文档: https://docs.rs/futures/latest/futures/
 futures = "0.3.31"
+
+# Tokio 异步运行时 - Rust 最流行的异步运行时
+# features = ["full"] 包含所有 Tokio 功能：
+# - full: 所有功能 (macros, rt-multi-thread, sync, time, io-util, net, fs)
+# - macros: 提供 tokio::main! 等宏
+# - rt-multi-thread: 多线程运行时
+# - sync: 异步同步原语 (Mutex, RwLock, 等)
+# - time: 异步计时器和延时
+# 文档: https://tokio.rs/
 tokio = { version = "1.47.1", features = ["full"] }
+
+# 开发依赖 (仅在开发时使用)
+[dev-dependencies]
+# 用于测试的辅助库，可以在这里添加
+# 例如：tokio-test = "0.4"
+
+# 编译时优化配置
+[profile.release]
+# 发布模式优化配置，提高运行时性能
+opt-level = 3          # 最高优化级别
+lto = true            # 链接时优化
+codegen-units = 1     # 减少代码生成单元以提高优化效果
+panic = "abort"       # 使用 abort 而不是 unwind 以减小二进制文件大小
+
+# 开发模式配置
+[profile.dev]
+# 开发模式配置，优化编译速度
+opt-level = 0         # 不优化，保证快速编译
+debug = true          # 包含调试信息
+overflow-checks = true # 保持溢出检查
+
+# 文档配置
+[package.metadata.docs.rs]
+# 文档构建配置，用于 docs.rs 网站
+all-features = true   # 构建文档时包含所有特性
+rustdoc-args = ["--cfg", "docsrs"]  # 传递给 rustdoc 的参数
