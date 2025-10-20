@@ -28,3 +28,20 @@
 > sqlx migrate add initial
 >
 > sqlx migrate run
+
+> rust doc --open --no-deps
+> cargo install spellcheck
+> cargo spellcheck
+> cargo audit
+> cargo install cargo-outdated
+> cargo outdated
+> cargo install cargo-deny
+> cargo deny init
+> cargo install cargo-docserver
+> cargo docserver --port 8080 --open
+> rustup component add rust-docs
+> rustup doc std::vec::Vec
+> rustup doc --error-codes E0382 # 查看错误码文档
+> rustup doc
+
+

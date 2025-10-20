@@ -1,3 +1,4 @@
+#[warn(missing_docs)]
 // 共享数据协议库 - 核心实现
 //
 // 这个库实现了一个高效的自定义二进制协议，用于分布式系统中的数据通信。
@@ -21,7 +22,6 @@
 // - Serde 文档：https://serde.rs/
 // - CRC32 算法：https://en.wikipedia.org/wiki/Cyclic_redundancy_check
 // - 网络字节序：https://en.wikipedia.org/wiki/Endianness
-
 use serde::{Deserialize, Serialize}; // 序列化和反序列化支持
 use std::time::{SystemTime, UNIX_EPOCH}; // 时间处理，用于生成时间戳
 
