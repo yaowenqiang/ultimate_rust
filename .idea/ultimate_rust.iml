@@ -59,6 +59,7 @@
       <sourceFolder url="file://$MODULE_DIR$/bytes/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/collector/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cycles/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/favor_iterators/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/file_adapt/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/file_read/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/iterators/src" isTestSource="false" />

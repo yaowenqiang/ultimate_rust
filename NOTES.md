@@ -43,5 +43,9 @@
 > rustup doc std::vec::Vec
 > rustup doc --error-codes E0382 # 查看错误码文档
 > rustup doc
+> https://rust-lang.org/zh-CN/learn/
+> https://course.rs/about-book.html
+> https://rustwiki.org/zh-CN/rust-by-example/
+> https://rustwiki.org/zh-CN/std/
 
 
